@@ -29,15 +29,28 @@
 }
 
 .math-bg {
-  background-image: radial-gradient(#1a237e 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-color: #f8f9fa;
+  background-image: 
+    linear-gradient(rgba(26, 31, 44, 0.97), rgba(26, 31, 44, 0.97)),
+    radial-gradient(circle at 2px 2px, rgba(147, 51, 234, 0.1) 1px, transparent 0);
+  background-size: 100% 100%, 24px 24px;
+  background-position: 0 0;
 }
 
 .sequence-card {
-  transition: transform 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .sequence-card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(147, 51, 234, 0.1);
+}
+
+/* Add smooth transitions */
+button, input, textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Enhance form focus states */
+input:focus, textarea:focus {
+  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
 }
