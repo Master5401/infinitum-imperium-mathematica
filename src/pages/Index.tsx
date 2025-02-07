@@ -2,11 +2,41 @@
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
-import { useState } from "react";
-import { Sigma, PlusCircle, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sigma, PlusCircle, Sparkles, Lightbulb, Trophy, Book } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [showSubmit, setShowSubmit] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const formulas = [
+      "E = mc²",
+      "∮ E·dℓ = -dΦB/dt",
+      "eiπ + 1 = 0",
+      "∇ × E = -∂B/∂t",
+      "Principia Mathematica",
+      "Ad Infinitum Et Ultra",
+      "Ars Magna",
+      "Quantum Entanglement",
+    ];
+
+    const createFloatingFormula = () => {
+      const formula = document.createElement("div");
+      formula.className = "floating-formula";
+      formula.textContent = formulas[Math.floor(Math.random() * formulas.length)];
+      formula.style.setProperty("--y", `${Math.random() * 100}vh`);
+      document.body.appendChild(formula);
+
+      formula.addEventListener("animationend", () => {
+        formula.remove();
+      });
+    };
+
+    const interval = setInterval(createFloatingFormula, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   const sampleSequences = [
     {
@@ -38,13 +68,39 @@ const Index = () => {
                 Imperium Infinitum Mathematica
               </h1>
             </div>
-            <Button
-              onClick={() => setShowSubmit(!showSubmit)}
-              className="flex items-center space-x-2 bg-purple-900 hover:bg-purple-800 text-purple-100"
-            >
-              {showSubmit ? <Sparkles className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
-              <span>{showSubmit ? "View Sequences" : "Submit Sequence"}</span>
-            </Button>
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+                onClick={() => navigate("/daily-challenge")}
+              >
+                <Trophy className="h-5 w-5 mr-2" />
+                Daily Challenge
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+                onClick={() => navigate("/library")}
+              >
+                <Book className="h-5 w-5 mr-2" />
+                Library
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+                onClick={() => navigate("/learn")}
+              >
+                <Lightbulb className="h-5 w-5 mr-2" />
+                Learn
+              </Button>
+              <Button
+                onClick={() => setShowSubmit(!showSubmit)}
+                className="flex items-center space-x-2 bg-purple-900 hover:bg-purple-800 text-purple-100"
+              >
+                {showSubmit ? <Sparkles className="h-5 w-5" /> : <PlusCircle className="h-5 w-5" />}
+                <span>{showSubmit ? "View Sequences" : "Submit Sequence"}</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
