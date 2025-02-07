@@ -1,8 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, MessageSquare, Code, Sparkles } from "lucide-react";
-import 'katex/dist/katex.min.css';
-import { BlockMath } from 'react-katex';
 
 interface SequenceCardProps {
   title: string;
@@ -22,21 +20,21 @@ export const SequenceCard = ({
   comments,
 }: SequenceCardProps) => {
   return (
-    <Card className="sequence-card w-full max-w-2xl bg-[#2A2F3C] border-purple-900/30 shadow-xl hover:shadow-purple-900/10">
+    <Card className="sequence-card w-full max-w-2xl bg-[#2A2F3C] border-purple-900/30 shadow-xl hover:shadow-purple-900/10 transform transition-all duration-300 hover:scale-[1.02]">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-xl font-bold text-purple-300">{title}</CardTitle>
             <CardDescription className="text-gray-400">by {author}</CardDescription>
           </div>
-          <Sparkles className="h-5 w-5 text-purple-400/40" />
+          <Sparkles className="h-5 w-5 text-purple-400/40 animate-pulse" />
         </div>
       </CardHeader>
       <CardContent>
         <div className="mb-4">
           <p className="text-gray-300 mb-4">{description}</p>
-          <div className="p-4 bg-[#1A1F2C] rounded-md overflow-x-auto border border-purple-900/20">
-            <BlockMath>{formula}</BlockMath>
+          <div className="p-4 bg-[#1A1F2C] rounded-md overflow-x-auto border border-purple-900/20 font-mono text-purple-200">
+            {formula}
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">

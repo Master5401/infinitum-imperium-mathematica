@@ -11,7 +11,7 @@ const Index = () => {
     {
       title: "The Mystical Fibonacci Variant",
       description: "A sequence where each number is the sum of the previous two, multiplied by the golden ratio's decimal places at that position",
-      formula: "a_n = \\varphi_{n}(a_{n-1} + a_{n-2}), \\quad a_0 = 0, a_1 = 1",
+      formula: "a(n) = φ_n(a_{n-1} + a_{n-2}), a_0 = 0, a_1 = 1",
       author: "Enigmatic_Math",
       votes: 42,
       comments: 15,
@@ -19,7 +19,7 @@ const Index = () => {
     {
       title: "Quantum Prime Spiral",
       description: "A sequence that maps prime numbers onto a spiral pattern in complex space, revealing hidden symmetries",
-      formula: "z_n = p_n e^{2\\pi i \\sqrt{p_n}}, \\text{ where } p_n \\text{ is the nth prime}",
+      formula: "z_n = p_n * e^(2πi * sqrt(p_n)), where p_n is the nth prime",
       author: "QuantumSeeker",
       votes: 38,
       comments: 12,
