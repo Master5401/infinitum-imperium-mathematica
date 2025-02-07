@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
@@ -34,7 +35,7 @@ const Index = () => {
             <div className="flex items-center space-x-3">
               <Sigma className="h-8 w-8 text-purple-400" />
               <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-300 bg-clip-text text-transparent">
-                MathTorcher
+                Imperium Infinitum Mathematica
               </h1>
             </div>
             <Button
