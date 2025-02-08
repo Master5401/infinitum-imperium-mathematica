@@ -20,6 +20,17 @@ const Index = () => {
       "Ad Infinitum Et Ultra",
       "Ars Magna",
       "Quantum Entanglement",
+      "∫ e^x dx = e^x + C",
+      "lim(x→∞) (1 + 1/x)^x = e",
+      "∑(n=1→∞) 1/n²= π²/6",
+      "Cogito, Ergo Sum",
+      "Ex Nihilo, Omnia",
+      "∇ × B = μ₀J + ε₀μ₀∂E/∂t",
+      "∇ · E = ρ/ε₀",
+      "dx/dt = f(x,t)",
+      "∂ψ/∂t = (-ℏ²/2m)∇²ψ",
+      "Carpe Mathematica",
+      "Veritas in Numeros",
     ];
 
     const createFloatingFormula = () => {
@@ -27,6 +38,12 @@ const Index = () => {
       formula.className = "floating-formula";
       formula.textContent = formulas[Math.floor(Math.random() * formulas.length)];
       formula.style.setProperty("--y", `${Math.random() * 100}vh`);
+      
+      // Add click handler for the easter egg glow effect
+      formula.addEventListener("click", () => {
+        formula.classList.add("glow");
+      });
+      
       document.body.appendChild(formula);
 
       formula.addEventListener("animationend", () => {
@@ -34,8 +51,28 @@ const Index = () => {
       });
     };
 
+    // Create particle effect on mouse move
+    const createParticle = (e: MouseEvent) => {
+      const particle = document.createElement("div");
+      particle.className = "particle";
+      particle.style.left = e.clientX + "px";
+      particle.style.top = e.clientY + "px";
+      particle.style.width = "100px";
+      particle.style.height = "100px";
+      particle.style.setProperty("--x", `${(Math.random() - 0.5) * 100}px`);
+      particle.style.setProperty("--y", `${(Math.random() - 0.5) * 100}px`);
+      document.body.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 4000);
+    };
+
     const interval = setInterval(createFloatingFormula, 3000);
-    return () => clearInterval(interval);
+    document.addEventListener("mousemove", createParticle);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("mousemove", createParticle);
+    };
   }, []);
 
   const sampleSequences = [

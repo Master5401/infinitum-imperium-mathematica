@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -71,6 +72,9 @@
   white-space: nowrap;
   animation: floatFormula 20s linear infinite;
   font-size: 1.5rem;
+  z-index: 1;
+  opacity: 0.15;
+  text-shadow: 0 0 10px rgba(147, 51, 234, 0.3);
 }
 
 @keyframes floatFormula {
@@ -84,6 +88,8 @@
 
 .sequence-card {
   transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(147, 51, 234, 0.05));
+  backdrop-filter: blur(10px);
 }
 
 .sequence-card:hover {
@@ -99,4 +105,41 @@ button, input, textarea {
 /* Enhance form focus states */
 input:focus, textarea:focus {
   box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+}
+
+/* Easter egg: Click on any mathematical formula to make it glow */
+.floating-formula.glow {
+  animation: glow 2s ease-in-out;
+  cursor: pointer;
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+}
+
+/* Add mysterious particle effects */
+.particle {
+  position: absolute;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: particle 4s ease-out forwards;
+}
+
+@keyframes particle {
+  0% {
+    transform: scale(0) translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translate(var(--x), var(--y));
+    opacity: 0;
+  }
 }
