@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import DailyChallenge from "./pages/DailyChallenge";
 import Library from "./pages/Library";
 import Learn from "./pages/Learn";
+import Graphing from "./pages/Graphing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/daily-challenge" element={<DailyChallenge />} />
           <Route path="/library" element={<Library />} />
           <Route path="/learn" element={<Learn />} />
+          <Route path="/graphing" element={<Graphing />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

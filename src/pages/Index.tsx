@@ -1,9 +1,8 @@
-
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
 import { useState, useEffect } from "react";
-import { Sigma, PlusCircle, Sparkles, Lightbulb, Trophy, Book } from "lucide-react";
+import { Sigma, PlusCircle, Sparkles, Lightbulb, Trophy, Book, LineChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
@@ -129,6 +128,14 @@ const Index = () => {
               >
                 <Lightbulb className="h-5 w-5 mr-2" />
                 Learn
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+                onClick={() => navigate("/graphing")}
+              >
+                <LineChart className="h-5 w-5 mr-2" />
+                Graphing
               </Button>
               <Button
                 onClick={() => setShowSubmit(!showSubmit)}
