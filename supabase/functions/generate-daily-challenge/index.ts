@@ -2,7 +2,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,29 +15,40 @@ serve(async (req) => {
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
+        'x-goog-api-key': geminiApiKey,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a mathematical sequence expert. Generate a challenging mathematical sequence puzzle with a hidden pattern. Include the sequence, hints, and the solution. Format as JSON with fields: sequence, hints (array), difficulty (1-10), and solution.'
-          },
-          {
-            role: 'user',
-            content: 'Generate a daily mathematical sequence challenge'
-          }
-        ],
+        contents: [{
+          parts: [{
+            text: `Generate a challenging mathematical sequence puzzle with a hidden pattern. 
+                   Format the response as a JSON object with these fields:
+                   - sequence: string (the sequence to solve)
+                   - hints: array of strings (helpful hints for solving)
+                   - difficulty: number (1-10)
+                   - solution: string (detailed explanation of the pattern)
+                   Make it engaging and educational.`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
       }),
     });
 
     const data = await response.json();
-    return new Response(JSON.stringify({ challenge: JSON.parse(data.choices[0].message.content) }), {
+    const text = data.candidates[0].content.parts[0].text;
+    // Extract JSON from the response text
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const challenge = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+
+    return new Response(JSON.stringify({ challenge }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
