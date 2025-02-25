@@ -2,12 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
+import { LatexConverter } from "@/components/LatexConverter";
 import { useState } from "react";
-import { Sigma, PlusCircle, Sparkles, Lightbulb, Trophy, Book, LineChart } from "lucide-react";
+import { Sigma, PlusCircle, Sparkles, Trophy, Book, LineChart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [showSubmit, setShowSubmit] = useState(false);
+  const [showLatexConverter, setShowLatexConverter] = useState(false);
   const navigate = useNavigate();
 
   const sampleSequences = [{
@@ -57,18 +59,18 @@ const Index = () => {
               <Button
                 variant="ghost"
                 className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
-                onClick={() => navigate("/learn")}
-              >
-                <Lightbulb className="h-5 w-5 mr-2" />
-                Learn
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
                 onClick={() => navigate("/graphing")}
               >
                 <LineChart className="h-5 w-5 mr-2" />
                 Graphing
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+                onClick={() => setShowLatexConverter(!showLatexConverter)}
+              >
+                <Sigma className="h-5 w-5 mr-2" />
+                LaTeX Oracle
               </Button>
               <Button
                 onClick={() => setShowSubmit(!showSubmit)}
@@ -83,7 +85,11 @@ const Index = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 bg-transparent">
-        {showSubmit ? (
+        {showLatexConverter ? (
+          <div className="flex justify-center mb-8">
+            <LatexConverter />
+          </div>
+        ) : showSubmit ? (
           <div className="flex justify-center mb-8">
             <SubmitSequence />
           </div>
