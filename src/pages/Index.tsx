@@ -2,14 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
-import { LatexConverter } from "@/components/LatexConverter";
 import { useState } from "react";
-import { Sigma, PlusCircle, Sparkles, Trophy, Book, LineChart } from "lucide-react";
+import { Sigma, PlusCircle, Sparkles, Trophy, Book } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [showSubmit, setShowSubmit] = useState(false);
-  const [showLatexConverter, setShowLatexConverter] = useState(false);
   const navigate = useNavigate();
 
   const sampleSequences = [{
@@ -57,22 +55,6 @@ const Index = () => {
                 Library
               </Button>
               <Button
-                variant="ghost"
-                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
-                onClick={() => navigate("/graphing")}
-              >
-                <LineChart className="h-5 w-5 mr-2" />
-                Graphing
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
-                onClick={() => setShowLatexConverter(!showLatexConverter)}
-              >
-                <Sigma className="h-5 w-5 mr-2" />
-                LaTeX Oracle
-              </Button>
-              <Button
                 onClick={() => setShowSubmit(!showSubmit)}
                 className="flex items-center space-x-2 bg-purple-900 hover:bg-purple-800 text-purple-100"
               >
@@ -85,11 +67,7 @@ const Index = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 bg-transparent">
-        {showLatexConverter ? (
-          <div className="flex justify-center mb-8">
-            <LatexConverter />
-          </div>
-        ) : showSubmit ? (
+        {showSubmit ? (
           <div className="flex justify-center mb-8">
             <SubmitSequence />
           </div>
