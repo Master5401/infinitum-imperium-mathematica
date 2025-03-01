@@ -112,7 +112,7 @@ const DailyChallenge = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1B25] to-[#2D243B] math-pattern">
+    <div className="min-h-screen bg-gradient-to-br from-[#1b1c22] to-[#272331] math-pattern">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Button
           variant="ghost"
@@ -123,7 +123,7 @@ const DailyChallenge = () => {
           Back to Home
         </Button>
 
-        <Card className={`bg-[#21202e]/80 border-amber-900/30 shadow-2xl backdrop-blur-sm transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <Card className={`bg-[#1b1c22]/80 border-amber-900/30 shadow-2xl backdrop-blur-sm transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 bg-clip-text text-transparent">
@@ -139,7 +139,7 @@ const DailyChallenge = () => {
               </div>
             ) : challenge ? (
               <div className="space-y-6">
-                <div className="p-6 bg-[#1A1B25]/80 rounded-lg border border-amber-900/20 transform transition-all duration-500 hover:scale-[1.01] hover:shadow-amber-900/20 hover:shadow-md">
+                <div className="p-6 bg-[#1b1c22]/80 rounded-lg border border-amber-900/20 transform transition-all duration-500 hover:scale-[1.01] hover:shadow-amber-900/20 hover:shadow-md">
                   <h3 className="text-xl text-amber-300 mb-4">Today's Sequence</h3>
                   <p className="text-lg font-mono text-amber-200">{challenge.sequence}</p>
                   <div className="mt-4 flex items-center">

@@ -83,32 +83,43 @@ const Index = () => {
     setTimeout(() => setAnimateHeader(true), 300);
   }, [showSubmit]);
 
+  // Latin letters for mystical floating elements
   const floatingElements = [
-    { icon: "∑", top: "15%", left: "10%", delay: 0 },
-    { icon: "∫", top: "25%", left: "85%", delay: 1 },
-    { icon: "π", top: "65%", left: "8%", delay: 2 },
-    { icon: "∞", top: "75%", left: "90%", delay: 3 },
-    { icon: "√", top: "45%", left: "7%", delay: 4 },
-    { icon: "φ", top: "12%", left: "92%", delay: 5 },
+    { text: "α", top: "15%", left: "5%", delay: 0, size: "3xl" },
+    { text: "β", top: "25%", left: "90%", delay: 1, size: "4xl" },
+    { text: "γ", top: "65%", left: "8%", delay: 2, size: "3xl" },
+    { text: "δ", top: "75%", left: "88%", delay: 1.5, size: "5xl" },
+    { text: "ε", top: "40%", left: "15%", delay: 2.5, size: "4xl" },
+    { text: "ζ", top: "10%", left: "80%", delay: 3, size: "3xl" },
+    { text: "η", top: "80%", left: "20%", delay: 2, size: "4xl" },
+    { text: "θ", top: "20%", left: "35%", delay: 1, size: "5xl" },
+    { text: "ι", top: "45%", left: "95%", delay: 3.5, size: "3xl" },
+    { text: "κ", top: "55%", left: "25%", delay: 4, size: "4xl" },
+    { text: "λ", top: "30%", left: "75%", delay: 2.5, size: "5xl" },
+    { text: "μ", top: "70%", left: "40%", delay: 3, size: "3xl" },
+    { text: "SPQR", top: "5%", left: "50%", delay: 0, size: "2xl" },
+    { text: "Alea iacta est", top: "95%", left: "50%", delay: 4, size: "xl" },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1B25] to-[#2D243B] math-pattern relative">
-      {/* Floating mathematical symbols */}
+    <div className="min-h-screen bg-gradient-to-br from-[#1b1c22] to-[#2b2231] math-pattern relative overflow-hidden">
+      {/* Latin letter floating elements */}
       {floatingElements.map((el, index) => (
         <div 
           key={index}
-          className="absolute text-amber-500/20 text-4xl font-serif animate-float opacity-70 select-none z-0"
+          className={`absolute text-amber-500/10 text-${el.size} font-serif animate-float opacity-60 select-none z-0 transform -translate-x-1/2 -translate-y-1/2`}
           style={{ 
             top: el.top, 
             left: el.left, 
             animationDelay: `${el.delay}s`,
-            animationDuration: `${6 + el.delay}s`
+            animationDuration: `${8 + el.delay}s`,
           }}
         >
-          {el.icon}
+          {el.text}
         </div>
       ))}
+      
+      <div className="absolute inset-0 z-0 bg-pattern-grid opacity-5"></div>
       
       <header className={`bg-[#1A1824]/90 shadow-xl border-b border-amber-900/20 backdrop-blur-sm sticky top-0 z-10 transition-all duration-1000 ${animateHeader ? 'translate-y-0 opacity-100' : '-translate-y-20 opacity-0'}`}>
         <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8">
@@ -117,7 +128,7 @@ const Index = () => {
               <div className="bg-gradient-to-r from-amber-400 to-amber-600 p-2 rounded-lg shadow-lg">
                 <Sigma className="h-7 w-7 text-[#1A1824]" />
               </div>
-              <h1 className="text-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 bg-clip-text font-extrabold text-transparent">
+              <h1 className="text-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 bg-clip-text font-extrabold text-transparent animate-shimmer">
                 Imperium Infinitum Mathematica
               </h1>
             </div>
@@ -152,21 +163,21 @@ const Index = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-10 sm:px-6 lg:px-8 bg-transparent relative z-0">
         {showSubmit ? (
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-8 animate-fade-in">
             <SubmitSequence />
           </div>
         ) : (
           <div className="space-y-8">
-            <div className="text-center mb-12 animate-fade-in">
+            <div className="text-center mb-12 animate-scale-in">
               <h2 className="text-3xl font-bold bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 bg-clip-text text-transparent mb-4">
                 Discover the Unknown
               </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
-                Explore mathematical sequences that bridge the gap between the known and the mysterious.
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                <span className="font-cinzel">Explore mathematical sequences</span> that bridge the gap between the known and the mysterious.
                 Each submission is verified by our AI to ensure uniqueness and significance.
               </p>
               <div className="mt-8 flex justify-center space-x-3">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-amber-900/20 text-amber-300 text-sm">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-amber-900/20 text-amber-300 text-sm animate-pulse">
                   <Star className="h-4 w-4 mr-2 text-amber-400" />
                   Featured Discoveries
                 </div>
@@ -177,7 +188,7 @@ const Index = () => {
               // Skeleton loading state
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {Array.from({ length: 2 }).map((_, index) => (
-                  <div key={index} className="w-full bg-[#21202e]/80 p-6 rounded-lg border border-amber-900/30 shadow-lg">
+                  <div key={index} className="w-full bg-[#1b1c22]/80 p-6 rounded-lg border border-amber-900/30 shadow-lg animate-pulse">
                     <div className="flex items-center justify-between mb-4">
                       <Skeleton className="h-6 w-64 bg-amber-900/20" />
                       <Skeleton className="h-5 w-5 rounded-full bg-amber-900/20" />
@@ -222,8 +233,11 @@ const Index = () => {
       <footer className="bg-[#1A1824]/90 border-t border-amber-900/20 py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-amber-300/50 text-sm">
-            Imperium Infinitum Mathematica — Exploring the Mysteries of Mathematical Sequences
+            <span className="font-cinzel">Imperium Infinitum Mathematica</span> — <span className="italic">Exploring the Mysteries of Mathematical Sequences</span>
           </p>
+          <div className="mt-3 text-amber-300/30 text-xs">
+            "Numeri regunt mundum" — <span className="italic">Numbers rule the world</span>
+          </div>
         </div>
       </footer>
     </div>
