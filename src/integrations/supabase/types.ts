@@ -9,7 +9,72 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      daily_challenges: {
+        Row: {
+          created_at: string | null
+          date: string
+          difficulty: number
+          hints: string[]
+          id: string
+          sequence: string
+          solution: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          difficulty: number
+          hints: string[]
+          id?: string
+          sequence: string
+          solution: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          difficulty?: number
+          hints?: string[]
+          id?: string
+          sequence?: string
+          solution?: string
+        }
+        Relationships: []
+      }
+      sequences: {
+        Row: {
+          author: string
+          comments: number | null
+          created_at: string | null
+          description: string
+          formula: string
+          id: string
+          latex_formula: string
+          title: string
+          votes: number | null
+        }
+        Insert: {
+          author: string
+          comments?: number | null
+          created_at?: string | null
+          description: string
+          formula: string
+          id?: string
+          latex_formula: string
+          title: string
+          votes?: number | null
+        }
+        Update: {
+          author?: string
+          comments?: number | null
+          created_at?: string | null
+          description?: string
+          formula?: string
+          id?: string
+          latex_formula?: string
+          title?: string
+          votes?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

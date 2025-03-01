@@ -1,5 +1,5 @@
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, AreaChart, Area, ScatterChart, Scatter } from "recharts";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -42,7 +42,75 @@ export const SequenceGraph = ({ data }: SequenceGraphProps) => {
           </ResponsiveContainer>
         );
       
-      // More visualization types can be added here
+      case "bar":
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#332940" />
+              <XAxis dataKey="n" stroke="#9F7AEA" />
+              <YAxis stroke="#9F7AEA" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#2A2F3C', border: '1px solid #4A3A59', color: '#9F7AEA' }}
+                itemStyle={{ color: '#B794F4' }}
+                labelStyle={{ color: '#9F7AEA' }}
+              />
+              <Legend />
+              <Bar 
+                dataKey="value" 
+                fill="#9F7AEA" 
+                animationDuration={1500}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        );
+
+      case "area":
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#332940" />
+              <XAxis dataKey="n" stroke="#9F7AEA" />
+              <YAxis stroke="#9F7AEA" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#2A2F3C', border: '1px solid #4A3A59', color: '#9F7AEA' }}
+                itemStyle={{ color: '#B794F4' }}
+                labelStyle={{ color: '#9F7AEA' }}
+              />
+              <Legend />
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke="#B794F4"
+                fill="#9F7AEA"
+                fillOpacity={0.3}
+                animationDuration={1500}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        );
+
+      case "scatter":
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <ScatterChart margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#332940" />
+              <XAxis dataKey="n" name="n" stroke="#9F7AEA" />
+              <YAxis dataKey="value" name="value" stroke="#9F7AEA" />
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#2A2F3C', border: '1px solid #4A3A59', color: '#9F7AEA' }}
+                cursor={{ strokeDasharray: '3 3' }}
+              />
+              <Legend />
+              <Scatter 
+                name="Values" 
+                data={chartData} 
+                fill="#B794F4"
+                animationDuration={1500}
+              />
+            </ScatterChart>
+          </ResponsiveContainer>
+        );
+      
       default:
         return (
           <ResponsiveContainer width="100%" height="100%">
@@ -87,7 +155,7 @@ export const SequenceGraph = ({ data }: SequenceGraphProps) => {
           </SelectContent>
         </Select>
       </div>
-      <div className="h-full w-full">
+      <div className="h-[300px] w-full">
         {getVisualization()}
       </div>
     </div>

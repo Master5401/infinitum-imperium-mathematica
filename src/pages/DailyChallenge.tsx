@@ -1,20 +1,18 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Brain, ArrowLeft, Lightbulb, Trophy, LineChart } from "lucide-react";
+import { Brain, ArrowLeft, Lightbulb, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { SequenceGraph } from "@/components/SequenceGraph";
 
 interface Challenge {
-  id: string;
+  id?: string;
   sequence: string;
   hints: string[];
   difficulty: number;
   solution: string;
-  date: string;
+  created_at?: string;
 }
 
 const DailyChallenge = () => {
@@ -23,7 +21,6 @@ const DailyChallenge = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
-  const [showGraph, setShowGraph] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -32,32 +29,68 @@ const DailyChallenge = () => {
       try {
         setLoading(true);
         
-        // First try to get challenge from Supabase
-        const { data: existingChallenge, error } = await supabase
+        // First try to get today's challenge from the database
+        const today = new Date().toISOString().split('T')[0];
+        const { data, error } = await supabase
           .from('daily_challenges')
           .select('*')
-          .eq('date', new Date().toISOString().split('T')[0])
-          .single();
-
-        if (existingChallenge) {
-          setChallenge(existingChallenge);
-        } else {
-          // If no challenge exists, call our edge function to generate one
-          const { data, error } = await supabase.functions.invoke('generate-daily-challenge');
+          .eq('created_at::date', today)
+          .order('created_at', { ascending: false })
+          .limit(1);
           
-          if (error) throw error;
-          if (data.challenge) {
-            setChallenge(data.challenge);
-          } else {
-            throw new Error("No challenge data returned");
+        if (error) throw error;
+        
+        // If we have a challenge for today, use it
+        if (data && data.length > 0) {
+          const dbChallenge = data[0];
+          setChallenge({
+            id: dbChallenge.id,
+            sequence: dbChallenge.sequence,
+            hints: dbChallenge.hints,
+            difficulty: dbChallenge.difficulty,
+            solution: dbChallenge.solution,
+            created_at: dbChallenge.created_at
+          });
+        } else {
+          // Otherwise, generate a new one
+          const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge');
+          
+          if (generateError) throw generateError;
+          
+          if (generatedData && generatedData.challenge) {
+            // Store the generated challenge in the database
+            const { error: insertError } = await supabase
+              .from('daily_challenges')
+              .insert({
+                sequence: generatedData.challenge.sequence,
+                hints: generatedData.challenge.hints,
+                difficulty: generatedData.challenge.difficulty,
+                solution: generatedData.challenge.solution
+              });
+              
+            if (insertError) throw insertError;
+            
+            setChallenge(generatedData.challenge);
           }
         }
       } catch (error) {
-        console.error("Error fetching challenge:", error);
+        console.error("Error fetching daily challenge:", error);
         toast({
           title: "Error",
           description: "Failed to load daily challenge. Please try again later.",
           variant: "destructive",
+        });
+        
+        // Fallback challenge
+        setChallenge({
+          sequence: "2, 4, 16, 256, 65536, ...",
+          hints: [
+            "Consider powers",
+            "Look at how each term relates to the previous one",
+            "Each term is the previous term raised to a power of 2"
+          ],
+          difficulty: 7,
+          solution: "a(n) = 2^(2^(n-1)) for n ≥ 1"
         });
       } finally {
         setLoading(false);
@@ -72,12 +105,6 @@ const DailyChallenge = () => {
       setCurrentHintIndex(prev => prev + 1);
     }
     setShowHint(true);
-  };
-
-  // Get sequence numbers for graphing
-  const getSequenceNumbers = () => {
-    if (!challenge) return [];
-    return challenge.sequence.split(/[,\s]+/).map(num => parseFloat(num.trim())).filter(n => !isNaN(n));
   };
 
   return (
@@ -143,16 +170,7 @@ const DailyChallenge = () => {
                   ))}
                 </div>
 
-                {showGraph && (
-                  <div className="p-4 bg-[#1A1F2C] rounded-lg border border-purple-900/20">
-                    <h3 className="text-xl text-purple-300 mb-4">Sequence Visualization</h3>
-                    <div className="h-64">
-                      <SequenceGraph data={getSequenceNumbers()} />
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center justify-between">
                   <Button
                     variant="outline"
                     className="text-purple-300 border-purple-900/30"
@@ -162,16 +180,6 @@ const DailyChallenge = () => {
                     <Lightbulb className="h-4 w-4 mr-2" />
                     {showHint ? "Next Hint" : "Show Hint"}
                   </Button>
-                  
-                  <Button
-                    variant="outline"
-                    className="text-purple-300 border-purple-900/30"
-                    onClick={() => setShowGraph(!showGraph)}
-                  >
-                    <LineChart className="h-4 w-4 mr-2" />
-                    {showGraph ? "Hide Graph" : "Visualize"}
-                  </Button>
-                  
                   <Button
                     variant="outline"
                     className="text-purple-300 border-purple-900/30"

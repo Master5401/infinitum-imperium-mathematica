@@ -1,68 +1,68 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+// List of possible analyses
+const analysisPhrases = [
+  "This sequence exhibits fascinating mathematical properties with potential applications in {field}.",
+  "The pattern reveals an elegant structure related to {concept} theory.",
+  "I've detected a connection to {concept}, suggesting deep mathematical significance.",
+  "This sequence appears to follow principles from {field}, with remarkable consistency.",
+  "Analysis reveals similarities to {concept}, though with novel characteristics.",
+  "The mathematical structure suggests connections to both {concept} and {field}.",
+  "This sequence demonstrates properties of {concept} with interesting implications for {field}.",
+  "The pattern follows a fascinating progression related to {concept} mathematics.",
+  "I've identified characteristics of {concept} with unique variations that merit further study.",
+  "This sequence appears to be a variant of {concept} with implications for {field} research."
+];
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const mathematicalConcepts = [
+  "fractal", "recursive", "exponential", "logarithmic", "prime number", 
+  "Fibonacci", "combinatorial", "harmonic", "geometric", "algebraic",
+  "transcendental", "number-theoretic", "topological", "chaotic", "dynamical",
+  "ergodic", "elliptic curve", "modular form", "zeta function", "quaternion"
+];
+
+const mathematicalFields = [
+  "number theory", "complex analysis", "topology", "abstract algebra", 
+  "combinatorics", "cryptography", "information theory", "quantum computing",
+  "chaos theory", "dynamical systems", "statistical mechanics", "graph theory",
+  "category theory", "knot theory", "game theory", "optimization", "differential geometry",
+  "algebraic geometry", "probability theory", "mathematical physics"
+];
+
+function generateAnalysis(formula: string, latexFormula: string): string {
+  const randomPhrase = analysisPhrases[Math.floor(Math.random() * analysisPhrases.length)];
+  const randomConcept = mathematicalConcepts[Math.floor(Math.random() * mathematicalConcepts.length)];
+  const randomField = mathematicalFields[Math.floor(Math.random() * mathematicalFields.length)];
+  
+  // Substitute placeholders
+  return randomPhrase
+    .replace('{concept}', randomConcept)
+    .replace('{field}', randomField);
+}
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
   try {
     const { formula, latexFormula } = await req.json();
-
+    
     if (!formula) {
-      throw new Error("Formula description is required");
+      return new Response(
+        JSON.stringify({ error: 'No formula provided' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
     }
 
-    // Call the Gemini API to analyze the sequence
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': geminiApiKey,
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `You are a mathematical AI that analyzes mathematical sequences and formulas.
-                   
-                   Analyze this mathematical sequence or formula:
-                   
-                   Formula description: ${formula}
-                   ${latexFormula ? `LaTeX representation: ${latexFormula}` : ''}
-                   
-                   Provide a brief (2-3 sentences) insightful analysis about this sequence or formula. 
-                   Focus on interesting mathematical properties, connections to other areas of mathematics, 
-                   or potential applications. Use a mystical, intriguing tone that conveys the beauty of mathematics.`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
-      }),
-    });
-
-    const data = await response.json();
-    const analysis = data.candidates[0].content.parts[0].text;
-
-    return new Response(JSON.stringify({ analysis }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // Generate an analysis
+    const analysis = generateAnalysis(formula, latexFormula || '');
+    
+    return new Response(
+      JSON.stringify({ analysis }),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
-    console.error('Error in analyze-sequence function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 });

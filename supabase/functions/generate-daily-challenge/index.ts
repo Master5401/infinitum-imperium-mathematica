@@ -1,98 +1,114 @@
 
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+interface Challenge {
+  sequence: string;
+  hints: string[];
+  difficulty: number;
+  solution: string;
+}
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Collection of possible challenges
+const challengeCollection: Challenge[] = [
+  {
+    sequence: "2, 4, 16, 256, 65536, ...",
+    hints: [
+      "Consider powers",
+      "Look at how each term relates to the previous one",
+      "Each term is the previous term raised to a power of 2"
+    ],
+    difficulty: 7,
+    solution: "a(n) = 2^(2^(n-1)) for n ≥ 1"
+  },
+  {
+    sequence: "1, 1, 2, 3, 5, 8, 13, 21, ...",
+    hints: [
+      "Look for a pattern in consecutive terms",
+      "Consider the sum of previous terms",
+      "Each term is the sum of the two terms that precede it"
+    ],
+    difficulty: 3,
+    solution: "The Fibonacci sequence: a(n) = a(n-1) + a(n-2) with a(1) = a(2) = 1"
+  },
+  {
+    sequence: "1, 3, 6, 10, 15, 21, ...",
+    hints: [
+      "These are known as triangular numbers",
+      "Think about how many points are needed to form an equilateral triangle",
+      "The nth term is the sum of the first n natural numbers"
+    ],
+    difficulty: 4,
+    solution: "a(n) = n(n+1)/2"
+  },
+  {
+    sequence: "1, 4, 9, 16, 25, 36, ...",
+    hints: [
+      "These numbers have a special geometric meaning",
+      "Think about areas",
+      "Each number is a perfect square"
+    ],
+    difficulty: 2,
+    solution: "a(n) = n²"
+  },
+  {
+    sequence: "2, 3, 5, 7, 11, 13, 17, 19, ...",
+    hints: [
+      "These numbers have a special property",
+      "Each is divisible only by 1 and itself",
+      "These are the prime numbers"
+    ],
+    difficulty: 3,
+    solution: "a(n) = the nth prime number"
+  },
+  {
+    sequence: "1, 11, 21, 1211, 111221, 312211, ...",
+    hints: [
+      "Look at the digits, not just the numerical value",
+      "Each term is a description of the previous term",
+      "Read the digits of the previous term aloud: 'one 1' becomes 11, 'two 1s' becomes 21, etc."
+    ],
+    difficulty: 8,
+    solution: "The Look-and-Say sequence: each term describes the digits of the previous term"
+  },
+  {
+    sequence: "0, 1, 1, 2, 4, 7, 13, 24, 44, ...",
+    hints: [
+      "Unlike Fibonacci, this uses more than the previous two terms",
+      "Each term is the sum of the three previous terms",
+      "a(n) = a(n-1) + a(n-2) + a(n-3)"
+    ],
+    difficulty: 5,
+    solution: "The Tribonacci sequence: a(n) = a(n-1) + a(n-2) + a(n-3) with a(0) = 0, a(1) = a(2) = 1"
+  },
+  {
+    sequence: "3, 7, 31, 127, 8191, 131071, ...",
+    hints: [
+      "These numbers have a binary representation of all 1s",
+      "Each number is one less than a power of 2",
+      "These are the Mersenne numbers"
+    ],
+    difficulty: 9,
+    solution: "a(n) = 2^n - 1, where n is a prime number"
+  }
+];
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
   try {
-    // First check if we already have a challenge for today
-    const today = new Date().toISOString().split('T')[0];
-    const { data: existingChallenge } = await supabase
-      .from('daily_challenges')
-      .select('*')
-      .eq('date', today)
-      .single();
-
-    if (existingChallenge) {
-      console.log("Found existing challenge for today");
-      return new Response(JSON.stringify({ challenge: existingChallenge }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // If no challenge exists for today, generate a new one
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': geminiApiKey,
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `Generate a challenging mathematical sequence puzzle with a hidden pattern. 
-                   Format the response as a JSON object with these fields:
-                   - sequence: string (the sequence to solve, just numbers separated by commas)
-                   - hints: array of strings (3 helpful hints of increasing clarity for solving)
-                   - difficulty: number (1-10)
-                   - solution: string (detailed explanation of the pattern)
-                   Make it engaging and educational for mathematics enthusiasts.`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
-      }),
-    });
-
-    const data = await response.json();
-    const text = data.candidates[0].content.parts[0].text;
+    // Select a random challenge from the collection
+    const randomIndex = Math.floor(Math.random() * challengeCollection.length);
+    const challenge = challengeCollection[randomIndex];
     
-    // Extract JSON from the response text
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const challenge = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
-
-    if (!challenge) {
-      throw new Error("Failed to parse challenge from AI response");
-    }
-
-    // Insert the new challenge into the database
-    const { data: savedChallenge, error } = await supabase
-      .from('daily_challenges')
-      .insert([challenge])
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return new Response(JSON.stringify({ challenge: savedChallenge }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // Return the challenge
+    return new Response(
+      JSON.stringify({
+        challenge,
+      }),
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
-    console.error('Error in generate-daily-challenge function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 });

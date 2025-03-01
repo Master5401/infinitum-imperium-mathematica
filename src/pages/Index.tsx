@@ -53,8 +53,8 @@ const Index = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        if (data.length > 0) {
-          setSequences(data);
+        if (data && data.length > 0) {
+          setSequences(data as Sequence[]);
         }
       } catch (error) {
         console.error("Error fetching sequences:", error);
