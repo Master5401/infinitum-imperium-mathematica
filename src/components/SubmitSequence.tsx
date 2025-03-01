@@ -2,9 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { Sparkles, Brain, Loader2, LineChart } from "lucide-react";
+import { Sparkles, Brain, Loader2, LineChart, RefreshCw, Wand2 } from "lucide-react";
 import 'katex/dist/katex.min.css';
 import katex from 'katex';
 import { supabase } from "@/integrations/supabase/client";
@@ -14,52 +14,57 @@ export const SubmitSequence = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [formula, setFormula] = useState("");
+  const [sequence, setSequence] = useState("");
   const [isValidating, setIsValidating] = useState(false);
+  const [isConverting, setIsConverting] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState("");
   const [latexFormula, setLatexFormula] = useState("");
   const [previewSequence, setPreviewSequence] = useState<number[]>([]);
   const [showGraph, setShowGraph] = useState(false);
   const [author, setAuthor] = useState("");
+  const [animateIn, setAnimateIn] = useState(false);
 
-  const convertToLatex = async (text: string) => {
+  useEffect(() => {
+    setTimeout(() => setAnimateIn(true), 100);
+  }, []);
+
+  const convertToLatex = async () => {
+    if (!formula) {
+      toast({
+        title: "Formula Required",
+        description: "Please enter a formula description first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
-      // In production, this would call a dedicated AI service
-      // For now, we'll use the Gemini API via our edge function
+      setIsConverting(true);
+      // Call the Supabase edge function to convert text to LaTeX
       const { data, error } = await supabase.functions.invoke('convert-to-latex', {
-        body: { text }
+        body: { text: formula }
       });
 
       if (error) throw error;
-      return data.latexFormula;
+      setLatexFormula(data.latexFormula);
+      
+      // Generate a preview sequence
+      const preview = await generatePreviewSequence();
+      setPreviewSequence(preview);
     } catch (error) {
       console.error("Error converting to LaTeX:", error);
-      // Fallback to basic pattern matching if AI conversion fails
-      return text
-        .replace(/square root of ([^,]+)/g, '\\sqrt{$1}')
-        .replace(/cubed/g, '^3')
-        .replace(/squared/g, '^2')
-        .replace(/infinity/g, '\\infty')
-        .replace(/sum of ([^,]+)/g, '\\sum $1')
-        .replace(/integral of ([^,]+)/g, '\\int $1')
-        .replace(/pi/g, '\\pi')
-        .replace(/theta/g, '\\theta')
-        .replace(/alpha/g, '\\alpha')
-        .replace(/beta/g, '\\beta')
-        .replace(/delta/g, '\\delta')
-        .replace(/for all ([a-z])/g, '\\forall $1')
-        .replace(/there exists ([a-z])/g, '\\exists $1')
-        .replace(/([a-z]) approaches ([a-z0-9]+)/g, '$1 \\to $2')
-        .replace(/factorial/g, '!')
-        .replace(/([a-z]) choose ([a-z])/g, '{$1 \\choose $2}')
-        .replace(/divided by/g, '\\div')
-        .replace(/multiplied by/g, '\\times')
-        .replace(/product of ([^,]+) from ([a-z]) to ([a-z0-9]+)/g, '\\prod_{$2}^{$3} $1');
+      toast({
+        title: "Conversion Failed",
+        description: "Could not convert your formula. Please try simplifying it.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsConverting(false);
     }
   };
 
   const analyzeSequence = async (formula: string) => {
     try {
-      // In production, this would call a dedicated AI service
       const { data, error } = await supabase.functions.invoke('analyze-sequence', {
         body: { formula, latexFormula }
       });
@@ -68,41 +73,31 @@ export const SubmitSequence = () => {
       return data.analysis;
     } catch (error) {
       console.error("Error analyzing sequence:", error);
-      // Fallback responses
-      const responses = [
-        "This sequence appears to follow a non-linear growth pattern with mystical properties...",
-        "Detecting traces of golden ratio relationships in the numerical progression...",
-        "Fascinating pattern emerging from chaos theory principles...",
-        "This sequence exhibits properties similar to ancient numerical systems...",
-      ];
-      return responses[Math.floor(Math.random() * responses.length)];
+      return "This sequence appears to follow an intriguing pattern that connects to several branches of mathematics...";
     }
   };
 
   const generatePreviewSequence = async () => {
     try {
-      // In production, this would calculate the actual sequence
-      // For now, we'll generate some sample values
+      // Parse the sequence input if available
+      if (sequence) {
+        const numbers = sequence.split(',')
+          .map(s => s.trim())
+          .filter(s => !isNaN(Number(s)))
+          .map(Number);
+          
+        if (numbers.length > 0) {
+          return numbers;
+        }
+      }
+      
+      // Fallback to generated values
       return Array.from({ length: 10 }, (_, i) => 
         Math.round((Math.sin(i * 0.5) + Math.cos(i * 0.3)) * 100) / 10
       );
     } catch (error) {
       console.error("Error generating preview:", error);
       return [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]; // Fallback to Fibonacci
-    }
-  };
-
-  const handleFormulaChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setFormula(text);
-    
-    if (text.length > 10) {
-      const convertedLatex = await convertToLatex(text);
-      setLatexFormula(convertedLatex);
-      
-      // Generate a preview sequence
-      const preview = await generatePreviewSequence();
-      setPreviewSequence(preview);
     }
   };
 
@@ -114,8 +109,7 @@ export const SubmitSequence = () => {
     try {
       // Generate final LaTeX if needed
       if (!latexFormula && formula) {
-        const convertedLatex = await convertToLatex(formula);
-        setLatexFormula(convertedLatex);
+        const convertedLatex = await convertToLatex();
       }
 
       // Analyze the sequence
@@ -140,11 +134,12 @@ export const SubmitSequence = () => {
         toast({
           title: "Sequence Validated & Submitted",
           description: "Our AI has confirmed this sequence is unique and has been added to the collection.",
-          className: "bg-purple-900 text-purple-100",
+          className: "bg-amber-900 text-amber-100",
         });
         setTitle("");
         setDescription("");
         setFormula("");
+        setSequence("");
         setLatexFormula("");
         setAiAnalysis("");
         setAuthor("");
@@ -163,72 +158,115 @@ export const SubmitSequence = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-2xl bg-[#2A2F3C] p-6 rounded-lg border border-purple-900/30">
-      <div className="text-center mb-6">
-        <h2 className="text-xl text-purple-300 mb-2">Submit Your Discovery</h2>
+    <form onSubmit={handleSubmit} className={`space-y-6 w-full max-w-2xl bg-[#21202e]/80 p-8 rounded-lg border border-amber-900/30 backdrop-blur-sm shadow-2xl transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="text-center mb-8">
+        <h2 className="text-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 bg-clip-text text-transparent mb-3">Submit Your Discovery</h2>
         <p className="text-gray-400">Our AI will validate your sequence for uniqueness and mathematical significance</p>
       </div>
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium mb-1 text-purple-300">
-          Title
-        </label>
-        <Input
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Name your sequence"
-          required
-          className="bg-[#1A1F2C] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50"
-        />
+      
+      <div className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label htmlFor="title" className="block text-sm font-medium mb-1 text-amber-300">
+              Title
+            </label>
+            <Input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Name your sequence"
+              required
+              className="bg-[#1A1B25]/80 border-amber-900/30 text-amber-100 placeholder:text-amber-900/50 focus:border-amber-500/50 transition-all"
+            />
+          </div>
+          <div>
+            <label htmlFor="author" className="block text-sm font-medium mb-1 text-amber-300">
+              Author
+            </label>
+            <Input
+              id="author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              placeholder="Your name or pseudonym"
+              className="bg-[#1A1B25]/80 border-amber-900/30 text-amber-100 placeholder:text-amber-900/50 focus:border-amber-500/50 transition-all"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium mb-1 text-amber-300">
+            Description
+          </label>
+          <Textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe your sequence and its significance"
+            required
+            className="bg-[#1A1B25]/80 border-amber-900/30 text-amber-100 placeholder:text-amber-900/50 focus:border-amber-500/50 min-h-[100px] transition-all"
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="sequence" className="block text-sm font-medium mb-1 text-amber-300">
+            Sequence Values
+          </label>
+          <Input
+            id="sequence"
+            value={sequence}
+            onChange={(e) => setSequence(e.target.value)}
+            placeholder="Enter values separated by commas (e.g., 1, 3, 6, 10, 15)"
+            className="bg-[#1A1B25]/80 border-amber-900/30 text-amber-100 placeholder:text-amber-900/50 focus:border-amber-500/50 font-mono transition-all"
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <label htmlFor="formula" className="block text-sm font-medium mb-1 text-amber-300">
+              Formula or Pattern
+            </label>
+            <Button 
+              type="button" 
+              size="sm"
+              variant="outline"
+              className="text-amber-300 border-amber-900/30 hover:bg-amber-900/20 hover:text-amber-200 transition-all"
+              onClick={convertToLatex}
+              disabled={isConverting || !formula}
+            >
+              {isConverting ? (
+                <>
+                  <RefreshCw className="h-3 w-3 mr-2 animate-spin" />
+                  Converting...
+                </>
+              ) : (
+                <>
+                  <Wand2 className="h-3 w-3 mr-2" />
+                  Convert to LaTeX
+                </>
+              )}
+            </Button>
+          </div>
+          <Textarea
+            id="formula"
+            value={formula}
+            onChange={(e) => setFormula(e.target.value)}
+            placeholder="Describe your formula in words (e.g., 'the square root of x squared plus y squared')"
+            required
+            className="bg-[#1A1B25]/80 border-amber-900/30 text-amber-100 placeholder:text-amber-900/50 focus:border-amber-500/50 font-mono min-h-[80px] transition-all"
+          />
+        </div>
       </div>
-      <div>
-        <label htmlFor="author" className="block text-sm font-medium mb-1 text-purple-300">
-          Author
-        </label>
-        <Input
-          id="author"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          placeholder="Your name or pseudonym"
-          className="bg-[#1A1F2C] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50"
-        />
-      </div>
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium mb-1 text-purple-300">
-          Description
-        </label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Describe your sequence and its significance"
-          required
-          className="bg-[#1A1F2C] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50"
-        />
-      </div>
-      <div>
-        <label htmlFor="formula" className="block text-sm font-medium mb-1 text-purple-300">
-          Formula or Pattern
-        </label>
-        <Textarea
-          id="formula"
-          value={formula}
-          onChange={handleFormulaChange}
-          placeholder="Describe your formula in words (e.g., 'the square root of x squared plus y squared')"
-          required
-          className="bg-[#1A1F2C] border-purple-900/30 text-purple-100 placeholder:text-purple-900/50 font-mono"
-        />
-      </div>
+      
       {latexFormula && (
-        <div className="mt-4 space-y-2">
-          <label className="block text-sm font-medium text-purple-300">
+        <div className="mt-6 space-y-2 animate-fade-in">
+          <label className="block text-sm font-medium text-amber-300">
             Generated LaTeX
           </label>
-          <div className="p-4 bg-[#1A1F2C] rounded-md border border-purple-900/20">
-            <div className="mb-2 font-mono text-sm text-purple-200">
+          <div className="p-4 bg-[#1A1B25]/80 rounded-md border border-amber-900/20 hover-glow">
+            <div className="mb-2 font-mono text-sm text-amber-200 overflow-x-auto">
               {latexFormula}
             </div>
-            <div className="p-2 bg-purple-900/10 rounded flex items-center justify-center">
+            <div className="p-4 bg-amber-900/10 rounded flex items-center justify-center">
               <div
                 dangerouslySetInnerHTML={{
                   __html: katex.renderToString(latexFormula, { throwOnError: false }),
@@ -240,28 +278,28 @@ export const SubmitSequence = () => {
       )}
       
       {previewSequence.length > 0 && (
-        <div className="mt-2">
+        <div className="mt-6 animate-fade-in">
           <div className="flex items-center justify-between">
-            <label className="block text-sm font-medium text-purple-300">
+            <label className="block text-sm font-medium text-amber-300">
               Sequence Preview
             </label>
             <Button 
               type="button" 
               variant="ghost" 
               size="sm" 
-              className="text-purple-300 hover:text-purple-200 hover:bg-purple-900/20"
+              className="text-amber-300 hover:text-amber-200 hover:bg-amber-900/20 transition-all"
               onClick={() => setShowGraph(!showGraph)}
             >
               <LineChart className="h-4 w-4 mr-2" />
               {showGraph ? "Hide Graph" : "Show Graph"}
             </Button>
           </div>
-          <div className="p-4 bg-[#1A1F2C] rounded-md border border-purple-900/20 mt-2">
-            <div className="font-mono text-sm text-purple-200">
+          <div className="p-4 bg-[#1A1B25]/80 rounded-md border border-amber-900/20 mt-2 hover-glow">
+            <div className="font-mono text-sm text-amber-200 overflow-x-auto">
               {previewSequence.join(", ")}
             </div>
             {showGraph && (
-              <div className="h-64 mt-4">
+              <div className="h-64 mt-4 animate-fade-in">
                 <SequenceGraph data={previewSequence} />
               </div>
             )}
@@ -270,17 +308,18 @@ export const SubmitSequence = () => {
       )}
       
       {aiAnalysis && (
-        <div className="bg-purple-900/20 p-4 rounded-lg border border-purple-400/20">
+        <div className="bg-amber-900/10 p-5 rounded-lg border border-amber-400/20 animate-fade-in">
           <div className="flex items-center gap-2 mb-2">
-            <Brain className="h-4 w-4 text-purple-400" />
-            <span className="text-sm font-medium text-purple-300">AI Analysis</span>
+            <Brain className="h-4 w-4 text-amber-400" />
+            <span className="text-sm font-medium text-amber-300">AI Analysis</span>
           </div>
-          <p className="text-sm text-purple-200">{aiAnalysis}</p>
+          <p className="text-sm text-amber-200">{aiAnalysis}</p>
         </div>
       )}
+      
       <Button 
         type="submit" 
-        className="w-full bg-purple-900 hover:bg-purple-800 text-purple-100"
+        className="w-full bg-amber-900 hover:bg-amber-800 text-amber-100 transition-all duration-300 hover-glow py-6"
         disabled={isValidating}
       >
         {isValidating ? (

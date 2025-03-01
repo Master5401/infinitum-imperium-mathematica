@@ -1,8 +1,23 @@
 
 project_id = "pnfklluwvlcgjaqlbcxu"
-[functions.analyze-sequence]
-verify_jwt = false
-[functions.convert-to-latex]
-verify_jwt = false
-[functions.generate-daily-challenge]
-verify_jwt = false
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[api.headers]
+Access-Control-Allow-Origin = ["*"]
+
+[db]
+port = 54322
+search_path = ["public", "extensions"]
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+api_url = "http://127.0.0.1"
+
+[functions]
+timeout_seconds = 60

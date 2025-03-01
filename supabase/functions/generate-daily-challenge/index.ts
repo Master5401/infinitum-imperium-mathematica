@@ -92,23 +92,51 @@ const challengeCollection: Challenge[] = [
   }
 ];
 
+// CORS headers for browser requests
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+  
   try {
+    console.log("Generating daily challenge");
+    
     // Select a random challenge from the collection
     const randomIndex = Math.floor(Math.random() * challengeCollection.length);
     const challenge = challengeCollection[randomIndex];
     
-    // Return the challenge
+    console.log(`Selected challenge: ${challenge.sequence}`);
+    
+    // Return the challenge with CORS headers
     return new Response(
       JSON.stringify({
         challenge,
       }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json' 
+        } 
+      }
     );
   } catch (error) {
+    console.error("Error generating challenge:", error);
+    
     return new Response(
       JSON.stringify({ error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { 
+        status: 500, 
+        headers: { 
+          ...corsHeaders,
+          'Content-Type': 'application/json' 
+        } 
+      }
     );
   }
 });
