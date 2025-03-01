@@ -2,14 +2,31 @@
 import { Button } from "@/components/ui/button";
 import { SequenceCard } from "@/components/SequenceCard";
 import { SubmitSequence } from "@/components/SubmitSequence";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sigma, PlusCircle, Sparkles, Trophy, Book } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+
+interface Sequence {
+  id: string;
+  title: string;
+  description: string;
+  formula: string;
+  latex_formula: string;
+  author: string;
+  votes: number;
+  comments: number;
+  created_at: string;
+}
 
 const Index = () => {
   const [showSubmit, setShowSubmit] = useState(false);
+  const [sequences, setSequences] = useState<Sequence[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Sample sequences as fallback
   const sampleSequences = [{
     title: "The Mystical Fibonacci Variant",
     description: "A sequence where each number is the sum of the previous two, multiplied by the golden ratio's decimal places at that position",
@@ -25,6 +42,32 @@ const Index = () => {
     votes: 38,
     comments: 12
   }];
+
+  useEffect(() => {
+    const fetchSequences = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('sequences')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        if (data.length > 0) {
+          setSequences(data);
+        }
+      } catch (error) {
+        console.error("Error fetching sequences:", error);
+        // Use sample sequences as fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!showSubmit) {
+      fetchSequences();
+    }
+  }, [showSubmit]);
 
   return (
     <div className="min-h-screen bg-[#1A1F2C] math-bg">
@@ -80,11 +123,49 @@ const Index = () => {
                 Each submission is verified by our AI to ensure uniqueness and significance.
               </p>
             </div>
-            {sampleSequences.map((sequence, index) => (
-              <div key={index} className="flex justify-center">
-                <SequenceCard {...sequence} />
-              </div>
-            ))}
+            {loading ? (
+              // Skeleton loading state
+              Array.from({ length: 2 }).map((_, index) => (
+                <div key={index} className="flex justify-center">
+                  <div className="w-full max-w-2xl bg-[#2A2F3C] p-6 rounded-lg border border-purple-900/30">
+                    <div className="flex items-center justify-between mb-4">
+                      <Skeleton className="h-6 w-64 bg-purple-900/20" />
+                      <Skeleton className="h-5 w-5 rounded-full bg-purple-900/20" />
+                    </div>
+                    <Skeleton className="h-4 w-full bg-purple-900/20 mb-4" />
+                    <Skeleton className="h-4 w-3/4 bg-purple-900/20 mb-6" />
+                    <Skeleton className="h-24 w-full bg-purple-900/20 mb-4" />
+                    <div className="flex space-x-4">
+                      <Skeleton className="h-8 w-16 bg-purple-900/20" />
+                      <Skeleton className="h-8 w-16 bg-purple-900/20" />
+                      <Skeleton className="h-8 w-16 bg-purple-900/20" />
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : sequences.length > 0 ? (
+              sequences.map((sequence, index) => (
+                <div key={sequence.id || index} className="flex justify-center">
+                  <SequenceCard 
+                    id={sequence.id}
+                    title={sequence.title}
+                    description={sequence.description}
+                    formula={sequence.formula}
+                    latexFormula={sequence.latex_formula}
+                    author={sequence.author}
+                    votes={sequence.votes}
+                    comments={sequence.comments}
+                  />
+                </div>
+              ))
+            ) : (
+              // Fallback to sample sequences if database is empty
+              sampleSequences.map((sequence, index) => (
+                <div key={index} className="flex justify-center">
+                  <SequenceCard {...sequence} />
+                </div>
+              ))
+            )}
           </div>
         )}
       </main>

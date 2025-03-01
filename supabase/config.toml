@@ -1,1 +1,8 @@
+
 project_id = "pnfklluwvlcgjaqlbcxu"
+[functions.analyze-sequence]
+verify_jwt = false
+[functions.convert-to-latex]
+verify_jwt = false
+[functions.generate-daily-challenge]
+verify_jwt = false
