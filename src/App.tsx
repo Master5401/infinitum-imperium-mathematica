@@ -1,64 +1,61 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-import Index from "./pages/Index";
-import DailyChallenge from "./pages/DailyChallenge";
-import Library from "./pages/Library";
-import Auth from "./pages/Auth";
-import NotFound from "./pages/NotFound";
-import NavBar from "./components/NavBar";
-import { supabase } from "./integrations/supabase/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "@/components/ui/sonner";
+import Index from "@/pages/Index";
+import DailyChallenge from "@/pages/DailyChallenge";
+import Library from "@/pages/Library";
+import Learn from "@/pages/Learn";
+import Graphing from "@/pages/Graphing";
+import NotFound from "@/pages/NotFound";
+import Auth from "@/pages/Auth";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import NavBar from "@/components/NavBar";
+import "./App.css";
 
-const queryClient = new QueryClient();
-
-const App = () => {
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
+function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="flex min-h-screen flex-col">
-            <NavBar />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/daily-challenge" element={<DailyChallenge />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </main>
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route 
+          path="/daily-challenge" 
+          element={
+            <RequireAuth>
+              <DailyChallenge />
+            </RequireAuth>
+          } 
+        />
+        <Route 
+          path="/library" 
+          element={
+            <RequireAuth>
+              <Library />
+            </RequireAuth>
+          } 
+        />
+        <Route 
+          path="/learn" 
+          element={
+            <RequireAuth>
+              <Learn />
+            </RequireAuth>
+          } 
+        />
+        <Route 
+          path="/graphing" 
+          element={
+            <RequireAuth>
+              <Graphing />
+            </RequireAuth>
+          } 
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Toaster />
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
