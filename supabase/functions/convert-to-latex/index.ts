@@ -1,89 +1,108 @@
 
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
-// Mapping of common mathematical terms to LaTeX
-const mathTerms = {
-  'square root': '\\sqrt{#}',
-  'squared': '^2',
-  'cubed': '^3',
-  'infinity': '\\infty',
-  'sum': '\\sum',
-  'integral': '\\int',
-  'pi': '\\pi',
-  'theta': '\\theta',
-  'alpha': '\\alpha',
-  'beta': '\\beta',
-  'delta': '\\delta',
-  'gamma': '\\gamma',
-  'lambda': '\\lambda',
-  'omega': '\\omega',
-  'times': '\\times',
-  'divided by': '\\div',
-  'for all': '\\forall',
-  'there exists': '\\exists',
-  'greater than or equal to': '\\geq',
-  'less than or equal to': '\\leq',
-  'not equal': '\\neq',
-  'approximately': '\\approx',
-  'subset': '\\subset',
-  'superset': '\\superset',
-  'union': '\\cup',
-  'intersection': '\\cap',
-  'element of': '\\in',
-  'not element of': '\\notin',
-  'factorial': '!',
-  'product': '\\prod',
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Basic conversion function
-function convertToLatex(text: string): string {
-  let result = text;
-  
-  // Replace math terms
-  for (const [term, latex] of Object.entries(mathTerms)) {
-    const regex = new RegExp(term, 'gi');
-    result = result.replace(regex, latex);
-  }
-  
-  // Handle specific patterns
-  result = result
-    .replace(/square root of ([^,]+)/gi, '\\sqrt{$1}')
-    .replace(/cubed/gi, '^3')
-    .replace(/squared/gi, '^2')
-    .replace(/infinity/gi, '\\infty')
-    .replace(/sum of ([^,]+)/gi, '\\sum $1')
-    .replace(/integral of ([^,]+)/gi, '\\int $1')
-    .replace(/for all ([a-z])/gi, '\\forall $1')
-    .replace(/there exists ([a-z])/gi, '\\exists $1')
-    .replace(/([a-z]) approaches ([a-z0-9]+)/gi, '$1 \\to $2')
-    .replace(/([a-z]) choose ([a-z])/gi, '{$1 \\choose $2}')
-    .replace(/product of ([^,]+) from ([a-z]) to ([a-z0-9]+)/gi, '\\prod_{$2}^{$3} $1');
-
-  return result;
-}
-
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
-    const { text } = await req.json();
+    const { formula } = await req.json();
     
-    if (!text) {
+    if (!formula) {
       return new Response(
-        JSON.stringify({ error: 'No text provided' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          error: "Missing formula parameter" 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
       );
     }
-
-    // Convert the text to LaTeX
-    const latexFormula = convertToLatex(text);
+    
+    console.log("Converting formula to LaTeX:", formula);
+    
+    // Convert formula to LaTeX
+    const latex = convertToLatex(formula);
     
     return new Response(
-      JSON.stringify({ latexFormula }),
-      { headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        latex
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
     );
   } catch (error) {
+    console.error("Error converting to LaTeX:", error);
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        error: "Failed to convert formula to LaTeX"
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
     );
   }
 });
+
+function convertToLatex(formula: string): string {
+  // This is a basic conversion - in a real application, you would use a more sophisticated method
+  // or an AI model for more complex formulas
+  
+  let latex = formula
+    // Replace powers
+    .replace(/\^(\d+)/g, "^{$1}")
+    .replace(/\^([a-zA-Z])/g, "^{$1}")
+    
+    // Replace square roots
+    .replace(/sqrt\(([^)]+)\)/g, "\\sqrt{$1}")
+    
+    // Replace fractions
+    .replace(/(\d+)\/(\d+)/g, "\\frac{$1}{$2}")
+    
+    // Replace common mathematical functions
+    .replace(/sin/g, "\\sin")
+    .replace(/cos/g, "\\cos")
+    .replace(/tan/g, "\\tan")
+    .replace(/log/g, "\\log")
+    .replace(/ln/g, "\\ln")
+    
+    // Replace infinity
+    .replace(/infinity/g, "\\infty")
+    .replace(/inf/g, "\\infty")
+    
+    // Replace common symbols
+    .replace(/pi/g, "\\pi")
+    .replace(/theta/g, "\\theta")
+    .replace(/alpha/g, "\\alpha")
+    .replace(/beta/g, "\\beta")
+    .replace(/gamma/g, "\\gamma")
+    .replace(/delta/g, "\\delta")
+    .replace(/epsilon/g, "\\epsilon")
+    
+    // Special cases for sequences
+    .replace(/a\(n\)/g, "a_n")
+    .replace(/F\(n\)/g, "F_n")
+    .replace(/T\(n\)/g, "T_n");
+  
+  // Handle special sequences
+  if (latex.includes("Fibonacci")) {
+    latex = latex.replace(
+      /F_n = F_{n-1} \+ F_{n-2}/,
+      "F_n = F_{n-1} + F_{n-2}"
+    );
+  }
+  
+  return latex;
+}

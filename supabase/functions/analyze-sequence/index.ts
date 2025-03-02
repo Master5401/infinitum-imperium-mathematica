@@ -1,68 +1,179 @@
 
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
-// List of possible analyses
-const analysisPhrases = [
-  "This sequence exhibits fascinating mathematical properties with potential applications in {field}.",
-  "The pattern reveals an elegant structure related to {concept} theory.",
-  "I've detected a connection to {concept}, suggesting deep mathematical significance.",
-  "This sequence appears to follow principles from {field}, with remarkable consistency.",
-  "Analysis reveals similarities to {concept}, though with novel characteristics.",
-  "The mathematical structure suggests connections to both {concept} and {field}.",
-  "This sequence demonstrates properties of {concept} with interesting implications for {field}.",
-  "The pattern follows a fascinating progression related to {concept} mathematics.",
-  "I've identified characteristics of {concept} with unique variations that merit further study.",
-  "This sequence appears to be a variant of {concept} with implications for {field} research."
-];
-
-const mathematicalConcepts = [
-  "fractal", "recursive", "exponential", "logarithmic", "prime number", 
-  "Fibonacci", "combinatorial", "harmonic", "geometric", "algebraic",
-  "transcendental", "number-theoretic", "topological", "chaotic", "dynamical",
-  "ergodic", "elliptic curve", "modular form", "zeta function", "quaternion"
-];
-
-const mathematicalFields = [
-  "number theory", "complex analysis", "topology", "abstract algebra", 
-  "combinatorics", "cryptography", "information theory", "quantum computing",
-  "chaos theory", "dynamical systems", "statistical mechanics", "graph theory",
-  "category theory", "knot theory", "game theory", "optimization", "differential geometry",
-  "algebraic geometry", "probability theory", "mathematical physics"
-];
-
-function generateAnalysis(formula: string, latexFormula: string): string {
-  const randomPhrase = analysisPhrases[Math.floor(Math.random() * analysisPhrases.length)];
-  const randomConcept = mathematicalConcepts[Math.floor(Math.random() * mathematicalConcepts.length)];
-  const randomField = mathematicalFields[Math.floor(Math.random() * mathematicalFields.length)];
-  
-  // Substitute placeholders
-  return randomPhrase
-    .replace('{concept}', randomConcept)
-    .replace('{field}', randomField);
-}
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
   try {
-    const { formula, latexFormula } = await req.json();
+    const { sequence } = await req.json();
     
-    if (!formula) {
+    if (!sequence) {
       return new Response(
-        JSON.stringify({ error: 'No formula provided' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          error: "Missing sequence parameter" 
+        }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        }
       );
     }
-
-    // Generate an analysis
-    const analysis = generateAnalysis(formula, latexFormula || '');
+    
+    console.log("Analyzing sequence:", sequence);
+    
+    // Simple algorithm to detect common sequences
+    // In a real application, you'd use a more sophisticated approach or an AI model
+    const analysis = analyzeSequence(sequence);
     
     return new Response(
-      JSON.stringify({ analysis }),
-      { headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        analysis
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
     );
   } catch (error) {
+    console.error("Error analyzing sequence:", error);
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({
+        error: "Failed to analyze sequence"
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
     );
   }
 });
+
+function analyzeSequence(sequenceStr: string) {
+  // Parse the sequence
+  const numbers = sequenceStr
+    .split(",")
+    .map(s => s.trim())
+    .filter(s => !s.includes("...")) // Remove ellipsis entries
+    .map(s => parseFloat(s));
+  
+  if (numbers.length < 3) {
+    return {
+      pattern: "Unknown",
+      description: "Need at least 3 terms to identify a pattern",
+      formula: "Insufficient data",
+      confidence: 0
+    };
+  }
+  
+  // Check for arithmetic sequence (constant difference)
+  const firstDiff = numbers[1] - numbers[0];
+  let isArithmetic = true;
+  
+  for (let i = 2; i < numbers.length; i++) {
+    if (Math.abs((numbers[i] - numbers[i-1]) - firstDiff) > 0.0001) {
+      isArithmetic = false;
+      break;
+    }
+  }
+  
+  if (isArithmetic) {
+    return {
+      pattern: "Arithmetic Sequence",
+      description: `Terms increase by a constant difference of ${firstDiff}`,
+      formula: `a(n) = ${numbers[0]} + (n-1) * ${firstDiff}`,
+      confidence: 0.9
+    };
+  }
+  
+  // Check for geometric sequence (constant ratio)
+  const firstRatio = numbers[1] / numbers[0];
+  let isGeometric = true;
+  
+  for (let i = 2; i < numbers.length; i++) {
+    if (Math.abs((numbers[i] / numbers[i-1]) - firstRatio) > 0.0001) {
+      isGeometric = false;
+      break;
+    }
+  }
+  
+  if (isGeometric) {
+    return {
+      pattern: "Geometric Sequence",
+      description: `Terms increase by a constant ratio of ${firstRatio.toFixed(2)}`,
+      formula: `a(n) = ${numbers[0]} * ${firstRatio.toFixed(2)}^(n-1)`,
+      confidence: 0.9
+    };
+  }
+  
+  // Check for square numbers
+  let isSquare = true;
+  for (let i = 0; i < numbers.length; i++) {
+    if (Math.abs(Math.sqrt(numbers[i]) - Math.round(Math.sqrt(numbers[i]))) > 0.0001) {
+      isSquare = false;
+      break;
+    }
+  }
+  
+  if (isSquare) {
+    return {
+      pattern: "Square Numbers",
+      description: "Each term is a perfect square",
+      formula: "a(n) = n²",
+      confidence: 0.8
+    };
+  }
+  
+  // Check for Fibonacci-like sequence (each term is the sum of the two preceding ones)
+  let isFibonacci = true;
+  for (let i = 2; i < numbers.length; i++) {
+    if (Math.abs((numbers[i-1] + numbers[i-2]) - numbers[i]) > 0.0001) {
+      isFibonacci = false;
+      break;
+    }
+  }
+  
+  if (isFibonacci) {
+    return {
+      pattern: "Fibonacci-like Sequence",
+      description: "Each term is the sum of the two preceding terms",
+      formula: `F(n) = F(n-1) + F(n-2) with F(1) = ${numbers[0]}, F(2) = ${numbers[1]}`,
+      confidence: 0.85
+    };
+  }
+  
+  // Check for cubic numbers
+  let isCubic = true;
+  for (let i = 0; i < numbers.length; i++) {
+    const cbrt = Math.cbrt(numbers[i]);
+    if (Math.abs(cbrt - Math.round(cbrt)) > 0.0001) {
+      isCubic = false;
+      break;
+    }
+  }
+  
+  if (isCubic) {
+    return {
+      pattern: "Cubic Numbers",
+      description: "Each term is a perfect cube",
+      formula: "a(n) = n³",
+      confidence: 0.8
+    };
+  }
+  
+  // If no specific pattern is recognized
+  return {
+    pattern: "Complex Pattern",
+    description: "This appears to be a more complex or custom sequence",
+    formula: "Could not determine a simple formula",
+    confidence: 0.3
+  };
+}

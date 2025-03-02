@@ -17,6 +17,7 @@ interface ChallengeCardProps {
   loading: boolean;
   challenge: Challenge | null;
   animateIn: boolean;
+  children?: React.ReactNode; // Add children prop to fix TypeScript error
 }
 
 const ChallengeCard: React.FC<ChallengeCardProps> = ({

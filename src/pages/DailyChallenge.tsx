@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,6 +6,8 @@ import ChallengeCard, { Challenge } from "@/components/daily-challenge/Challenge
 import HintsSection from "@/components/daily-challenge/HintsSection";
 import SolutionDisplay from "@/components/daily-challenge/SolutionDisplay";
 import ActionButtons from "@/components/daily-challenge/ActionButtons";
+import SequenceVisualizer from "@/components/daily-challenge/SequenceVisualizer";
+import SequenceAnalysis from "@/components/daily-challenge/SequenceAnalysis";
 
 const DailyChallenge = () => {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
@@ -25,8 +28,7 @@ const DailyChallenge = () => {
         const { data, error } = await supabase
           .from('daily_challenges')
           .select('*')
-          .eq('created_at::date', today)
-          .order('created_at', { ascending: false })
+          .eq('date', today)
           .limit(1);
           
         if (error) throw error;
@@ -56,7 +58,8 @@ const DailyChallenge = () => {
                 sequence: generatedData.challenge.sequence,
                 hints: generatedData.challenge.hints,
                 difficulty: generatedData.challenge.difficulty,
-                solution: generatedData.challenge.solution
+                solution: generatedData.challenge.solution,
+                date: today
               });
               
             if (insertError) throw insertError;
@@ -111,6 +114,12 @@ const DailyChallenge = () => {
         >
           {challenge && (
             <>
+              {/* Add Sequence Visualizer */}
+              <SequenceVisualizer sequence={challenge.sequence} />
+              
+              {/* Add AI Analysis */}
+              <SequenceAnalysis sequence={challenge.sequence} />
+              
               <HintsSection 
                 hints={challenge.hints}
                 currentHintIndex={currentHintIndex}
