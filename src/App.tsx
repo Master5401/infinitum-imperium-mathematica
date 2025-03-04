@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import Index from "@/pages/Index";
 import DailyChallenge from "@/pages/DailyChallenge";
@@ -15,45 +15,49 @@ import "./App.css";
 function App() {
   return (
     <BrowserRouter>
-      <NavBar />
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route 
-          path="/daily-challenge" 
-          element={
-            <RequireAuth>
-              <DailyChallenge />
-            </RequireAuth>
-          } 
-        />
-        <Route 
-          path="/library" 
-          element={
-            <RequireAuth>
-              <Library />
-            </RequireAuth>
-          } 
-        />
-        <Route 
-          path="/learn" 
-          element={
-            <RequireAuth>
-              <Learn />
-            </RequireAuth>
-          } 
-        />
-        <Route 
-          path="/graphing" 
-          element={
-            <RequireAuth>
-              <Graphing />
-            </RequireAuth>
-          } 
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <Toaster />
+      <div className="app-wrapper">
+        <NavBar />
+        <div className="page-content math-background">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route 
+              path="/daily-challenge" 
+              element={
+                <RequireAuth>
+                  <DailyChallenge />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/library" 
+              element={
+                <RequireAuth>
+                  <Library />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/learn" 
+              element={
+                <RequireAuth>
+                  <Learn />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/graphing" 
+              element={
+                <RequireAuth>
+                  <Graphing />
+                </RequireAuth>
+              } 
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+        <Toaster />
+      </div>
     </BrowserRouter>
   );
 }
