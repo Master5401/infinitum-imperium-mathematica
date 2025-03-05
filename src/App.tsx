@@ -17,7 +17,7 @@ function App() {
     <BrowserRouter>
       <div className="app-wrapper">
         <NavBar />
-        <div className="page-content math-background">
+        <div className="page-content">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />

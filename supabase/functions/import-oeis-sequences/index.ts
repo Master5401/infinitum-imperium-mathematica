@@ -1,5 +1,6 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { load } from 'https://esm.sh/cheerio@1.0.0-rc.12';
 
 // Define CORS headers
 const corsHeaders = {
@@ -13,62 +14,81 @@ const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface OEISSequence {
-  id: string;
-  number: string;
+  oeis_id: string;
   name: string;
   description: string;
   values: string;
   formula?: string;
 }
 
-// Handle OEIS API fetch and data transformation
-async function fetchOEISSequences(start: number, count: number) {
+// Handle OEIS data fetch and scraping
+async function fetchOEISSequence(sequenceNumber: number): Promise<OEISSequence | null> {
   try {
-    // The OEIS API or a service that provides OEIS data
-    // Note: This is a simplified example; actual implementation depends on OEIS API specifics
-    const response = await fetch(`https://oeis.org/search?q=id:A${start.toString().padStart(6, '0')}..A${(start + count - 1).toString().padStart(6, '0')}&fmt=json`);
+    const paddedNumber = sequenceNumber.toString().padStart(6, '0');
+    const oeis_id = `A${paddedNumber}`;
+    const url = `https://oeis.org/${oeis_id}`;
+    
+    console.log(`Fetching sequence ${oeis_id} from ${url}`);
+    
+    const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch OEIS data: ${response.status}`);
+      console.error(`Failed to fetch OEIS sequence ${oeis_id}: ${response.status}`);
+      return null;
     }
     
-    const data = await response.json();
-    console.log('Fetched OEIS data:', data);
+    const html = await response.text();
+    const $ = load(html);
     
-    // Process and transform the data for our database
-    const sequences = data.results.map((seq: any) => {
-      return {
-        id: seq.number || '',
-        number: seq.number || '',
-        name: seq.name || '',
-        description: seq.description || '',
-        values: seq.data || '',
-        formula: seq.formula || ''
-      };
+    // Extract the sequence information
+    const name = $('title').text().replace('- OEIS', '').trim();
+    const description = $('.sequence').first().text().trim();
+    
+    // Extract the values
+    let values = '';
+    $('.sequence').each((i, el) => {
+      const text = $(el).text().trim();
+      if (text.match(/^\d/)) {
+        values = text;
+        return false; // Break the loop
+      }
     });
     
-    return sequences;
+    // Extract formula if available
+    let formula = '';
+    $('td:contains("Formula")').each((i, el) => {
+      const formulaRow = $(el).closest('tr');
+      formula = formulaRow.find('td').eq(1).text().trim();
+    });
+    
+    return {
+      oeis_id,
+      name,
+      description,
+      values,
+      formula: formula || null
+    };
   } catch (error) {
-    console.error('Error fetching OEIS sequences:', error);
-    throw error;
+    console.error(`Error fetching sequence ${sequenceNumber}:`, error);
+    return null;
   }
 }
 
 // Store sequences in Supabase
 async function storeSequences(sequences: OEISSequence[]) {
+  if (sequences.length === 0) return;
+  
   try {
+    const filteredSequences = sequences.filter(seq => seq !== null);
+    console.log(`Storing ${filteredSequences.length} sequences in database`);
+    
     const { data, error } = await supabase
       .from('oeis_sequences')
-      .upsert(sequences.map(seq => ({
-        oeis_id: seq.id,
-        name: seq.name,
-        description: seq.description,
-        values: seq.values,
-        formula: seq.formula || null
-      })));
+      .upsert(filteredSequences, { onConflict: 'oeis_id' });
     
     if (error) throw error;
-    console.log('Successfully stored sequences:', data);
+    
+    console.log('Successfully stored sequences');
     return data;
   } catch (error) {
     console.error('Error storing sequences in database:', error);
@@ -95,20 +115,37 @@ Deno.serve(async (req) => {
       );
     }
     
-    // Fetch sequences from OEIS
-    const sequences = await fetchOEISSequences(start, count);
+    console.log(`Importing OEIS sequences from ${start} to ${start + count - 1}`);
     
-    // Store in database
-    if (sequences.length > 0) {
-      await storeSequences(sequences);
+    // Fetch sequences in parallel with batching to avoid overwhelming the server
+    const batchSize = 10;
+    const sequences: OEISSequence[] = [];
+    
+    for (let batchStart = start; batchStart < start + count; batchStart += batchSize) {
+      const batchEnd = Math.min(batchStart + batchSize, start + count);
+      console.log(`Processing batch from ${batchStart} to ${batchEnd - 1}`);
+      
+      const batchPromises = [];
+      for (let i = batchStart; i < batchEnd; i++) {
+        batchPromises.push(fetchOEISSequence(i));
+      }
+      
+      const batchResults = await Promise.all(batchPromises);
+      const validResults = batchResults.filter(Boolean) as OEISSequence[];
+      
+      if (validResults.length > 0) {
+        // Store each batch to reduce memory usage
+        await storeSequences(validResults);
+        sequences.push(...validResults);
+      }
     }
     
     return new Response(
       JSON.stringify({ 
         success: true, 
         message: `Processed ${sequences.length} OEIS sequences`,
-        firstSequence: sequences.length > 0 ? sequences[0].id : null,
-        lastSequence: sequences.length > 0 ? sequences[sequences.length - 1].id : null
+        firstSequence: sequences.length > 0 ? sequences[0].oeis_id : null,
+        lastSequence: sequences.length > 0 ? sequences[sequences.length - 1].oeis_id : null
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +32,7 @@ export const OEISSequenceSearch = () => {
     
     setLoading(true);
     try {
+      // Use a type-safe approach with explicit cast
       const { data, error } = await supabase
         .from('oeis_sequences')
         .select('*')
@@ -39,9 +41,11 @@ export const OEISSequenceSearch = () => {
       
       if (error) throw error;
       
-      setSequences(data || []);
+      if (data) {
+        setSequences(data as unknown as OEISSequence[]);
+      }
       
-      if (data.length === 0) {
+      if (!data || data.length === 0) {
         toast.info("No sequences found matching your search.");
       }
     } catch (error) {
@@ -62,7 +66,11 @@ export const OEISSequenceSearch = () => {
       
       if (error) throw error;
       
-      toast.success(`Successfully imported ${data.message}`);
+      toast.success(`Successfully imported sequences`);
+      if (data && data.message) {
+        toast.success(data.message);
+      }
+      
       // Refresh the search if we're already searching for something
       if (searchTerm) {
         searchSequences();
@@ -76,7 +84,12 @@ export const OEISSequenceSearch = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-4xl mx-auto"
+    >
       <Tabs defaultValue="search" value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid w-full grid-cols-2 bg-[#2A2D3A]/50 rounded-lg border border-amber-900/20">
           <TabsTrigger 
@@ -133,43 +146,57 @@ export const OEISSequenceSearch = () => {
                 </Button>
               </div>
               
-              <div className="mt-6 space-y-4">
-                {sequences.length > 0 ? (
-                  sequences.map((sequence) => (
-                    <Card key={sequence.id} className="bg-[#2A2D3A]/70 border-amber-900/20 hover:border-amber-900/40 transition-all duration-300">
-                      <CardHeader className="pb-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg text-amber-300">
-                              {sequence.name}
-                            </CardTitle>
-                            <CardDescription className="text-amber-100/70">
-                              {sequence.oeis_id}
-                            </CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="pt-0">
-                        <p className="text-sm text-amber-100/80 mb-2">{sequence.description}</p>
-                        <div className="bg-[#1A1B25]/80 p-2 rounded-md border border-amber-900/20 overflow-x-auto">
-                          <code className="text-xs font-mono text-amber-200">{sequence.values}</code>
-                        </div>
-                        {sequence.formula && (
-                          <div className="mt-2">
-                            <span className="text-xs font-medium text-amber-300">Formula: </span>
-                            <span className="text-xs font-mono text-amber-200">{sequence.formula}</span>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : searchTerm ? (
-                  <div className="text-center py-8">
-                    <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-2" />
-                    <p className="text-amber-300">No sequences found. Try a different search term or import more sequences.</p>
-                  </div>
-                ) : null}
-              </div>
+              <AnimatePresence>
+                <motion.div className="mt-6 space-y-4">
+                  {sequences.length > 0 ? (
+                    sequences.map((sequence) => (
+                      <motion.div
+                        key={sequence.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Card className="bg-[#2A2D3A]/70 border-amber-900/20 hover:border-amber-900/40 transition-all duration-300">
+                          <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <CardTitle className="text-lg text-amber-300">
+                                  {sequence.name}
+                                </CardTitle>
+                                <CardDescription className="text-amber-100/70">
+                                  {sequence.oeis_id}
+                                </CardDescription>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-0">
+                            <p className="text-sm text-amber-100/80 mb-2">{sequence.description}</p>
+                            <div className="bg-[#1A1B25]/80 p-2 rounded-md border border-amber-900/20 overflow-x-auto">
+                              <code className="text-xs font-mono text-amber-200">{sequence.values}</code>
+                            </div>
+                            {sequence.formula && (
+                              <div className="mt-2">
+                                <span className="text-xs font-medium text-amber-300">Formula: </span>
+                                <span className="text-xs font-mono text-amber-200">{sequence.formula}</span>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))
+                  ) : searchTerm ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="text-center py-8"
+                    >
+                      <AlertTriangle className="h-8 w-8 text-amber-500 mx-auto mb-2" />
+                      <p className="text-amber-300">No sequences found. Try a different search term or import more sequences.</p>
+                    </motion.div>
+                  ) : null}
+                </motion.div>
+              </AnimatePresence>
             </CardContent>
           </Card>
         </TabsContent>
@@ -244,6 +271,6 @@ export const OEISSequenceSearch = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </motion.div>
   );
 };

@@ -49,10 +49,6 @@
 }
 
 .math-background {
-  background-color: #1b1c22;
-  background-image: 
-    radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.03) 0%, transparent 50%);
   position: relative;
 }
 
@@ -73,6 +69,9 @@
   flex-direction: column;
   min-height: 100vh;
   background-color: #1b1c22;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
 }
 
 .page-content {
@@ -81,10 +80,65 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  background-color: #1b1c22;
 }
 
 @media (min-width: 768px) {
   .page-content {
     padding: 2rem;
   }
+}
+
+/* Animation classes */
+@keyframes float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+.latin-character {
+  animation: float 8s ease-in-out infinite;
+  opacity: 0.1;
+  position: absolute;
+  pointer-events: none;
+}
+
+/* Shimmer effect for headings */
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    to right,
+    rgba(255, 215, 0, 0.1) 0%,
+    rgba(255, 215, 0, 0.3) 25%,
+    rgba(255, 215, 0, 0.1) 50%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+}
+
+/* Font for headings */
+.font-cinzel {
+  font-family: 'Cinzel', serif;
 }

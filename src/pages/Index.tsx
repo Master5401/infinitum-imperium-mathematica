@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { OEISSequenceSearch } from "@/components/OEISSequenceSearch";
 import { 
@@ -51,9 +51,11 @@ const Index = () => {
     <div className="relative overflow-hidden min-h-screen w-full">
       {/* Floating mathematical symbols */}
       {symbols.map((symbol, index) => (
-        <div
+        <motion.div
           key={index}
           className="absolute text-amber-900/10 latin-character"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.1 }}
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
@@ -63,7 +65,7 @@ const Index = () => {
           }}
         >
           {symbol}
-        </div>
+        </motion.div>
       ))}
 
       <motion.div
@@ -73,7 +75,7 @@ const Index = () => {
         variants={containerVariants}
       >
         <motion.div variants={itemVariants} className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-shimmer font-cinzel">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-shimmer font-cinzel text-amber-300">
             Mathematical Sequences Explorer
           </h1>
           <p className="text-xl text-amber-100/80 max-w-2xl mx-auto">
@@ -86,7 +88,11 @@ const Index = () => {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
         >
           <Link to="/daily-challenge">
-            <div className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover:transform hover:scale-[1.02] hover-glow h-full">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover-glow h-full"
+            >
               <div className="bg-amber-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 mx-auto">
                 <Brain className="h-8 w-8 text-amber-400" />
               </div>
@@ -97,11 +103,15 @@ const Index = () => {
               <Button variant="link" className="mt-4 text-amber-400 hover:text-amber-300">
                 Try Today's Challenge <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
-            </div>
+            </motion.div>
           </Link>
 
           <Link to="/library">
-            <div className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover:transform hover:scale-[1.02] hover-glow h-full">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover-glow h-full"
+            >
               <div className="bg-amber-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 mx-auto">
                 <BookOpen className="h-8 w-8 text-amber-400" />
               </div>
@@ -112,11 +122,15 @@ const Index = () => {
               <Button variant="link" className="mt-4 text-amber-400 hover:text-amber-300">
                 Explore Library <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
-            </div>
+            </motion.div>
           </Link>
 
           <Link to="/graphing">
-            <div className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover:transform hover:scale-[1.02] hover-glow h-full">
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#1b1c22]/80 border border-amber-900/30 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-300 hover-glow h-full"
+            >
               <div className="bg-amber-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-4 mx-auto">
                 <LineChart className="h-8 w-8 text-amber-400" />
               </div>
@@ -127,7 +141,7 @@ const Index = () => {
               <Button variant="link" className="mt-4 text-amber-400 hover:text-amber-300">
                 Start Graphing <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
-            </div>
+            </motion.div>
           </Link>
         </motion.div>
 
@@ -135,22 +149,27 @@ const Index = () => {
           <Button 
             onClick={() => setShowOEIS(!showOEIS)}
             className="bg-amber-900 hover:bg-amber-800 text-amber-100 py-6 px-8"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Sigma className="h-5 w-5 mr-2" />
             {showOEIS ? "Hide OEIS Database" : "Explore OEIS Database"}
           </Button>
         </motion.div>
 
-        {showOEIS && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mt-8"
-          >
-            <OEISSequenceSearch />
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {showOEIS && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, type: "spring" }}
+              className="mt-8"
+            >
+              <OEISSequenceSearch />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div 
           variants={itemVariants} 
@@ -161,15 +180,19 @@ const Index = () => {
           <p className="text-amber-100/80 mb-6">
             Share your own sequences, discuss patterns with fellow enthusiasts, and contribute to our growing database of mathematical wonders.
           </p>
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link to="/auth">
-              <Button className="bg-amber-900 hover:bg-amber-800 text-amber-100">
-                Sign In to Contribute
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button className="bg-amber-900 hover:bg-amber-800 text-amber-100">
+                  Sign In to Contribute
+                </Button>
+              </motion.div>
             </Link>
-            <Button variant="outline" className="border-amber-900/30 text-amber-300 hover:bg-amber-900/20">
-              Learn More <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button variant="outline" className="border-amber-900/30 text-amber-300 hover:bg-amber-900/20">
+                Learn More <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </motion.div>
           </div>
         </motion.div>
       </motion.div>
