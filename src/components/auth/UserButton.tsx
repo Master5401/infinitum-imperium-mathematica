@@ -46,12 +46,11 @@ export function UserButton() {
     try {
       await supabase.auth.signOut();
       toast("Signed out", {
-        description: "You have been successfully signed out.",
+        description: "You have been successfully signed out."
       });
     } catch (error: any) {
       toast("Error signing out", {
-        description: error.message,
-        variant: "destructive",
+        description: error.message
       });
     }
   };

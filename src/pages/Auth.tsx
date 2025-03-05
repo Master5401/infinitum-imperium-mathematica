@@ -8,7 +8,7 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
   
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 math-pattern">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 bg-gray-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-gray-900 to-gray-950">
       <Card className="mx-auto w-full max-w-md border-amber-600/20 bg-gradient-to-b from-gray-900 to-gray-950 shadow-lg shadow-amber-900/10">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold text-amber-500">Math Torcher</CardTitle>
@@ -23,13 +23,13 @@ const Auth = () => {
             <TabsList className="grid w-full grid-cols-2 bg-gray-800/50">
               <TabsTrigger 
                 value="signin" 
-                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100"
+                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100 text-amber-300/70"
               >
                 Sign In
               </TabsTrigger>
               <TabsTrigger 
                 value="signup"
-                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100"
+                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100 text-amber-300/70"
               >
                 Sign Up
               </TabsTrigger>

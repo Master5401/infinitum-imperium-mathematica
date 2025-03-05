@@ -22,8 +22,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     
     if (!email || !password) {
       toast("Missing fields", {
-        description: "Please provide both email and password.",
-        variant: "destructive",
+        description: "Please provide both email and password."
       });
       return;
     }
@@ -42,21 +41,20 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         if (data?.user) {
           if (data.user.identities?.length === 0) {
             toast("Account already exists", {
-              description: "Please sign in instead.",
+              description: "Please sign in instead."
             });
             return;
           }
 
           toast("Account created!", {
-            description: "Welcome to Math Torcher! Please check your email for confirmation.",
+            description: "Welcome to Math Torcher! Please check your email for confirmation."
           });
           
           // Attempt to sign in immediately if email confirmation is not required
           await handleSignIn();
         } else {
           toast("Something went wrong", {
-            description: "Please try again.",
-            variant: "destructive",
+            description: "Please try again."
           });
         }
       } else {
@@ -65,8 +63,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     } catch (error: any) {
       console.error("Auth error:", error);
       toast(mode === "signup" ? "Signup failed" : "Login failed", {
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
+        description: error.message || "An unexpected error occurred"
       });
     } finally {
       setLoading(false);
@@ -84,22 +81,20 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       
       if (data?.user) {
         toast("Login successful", {
-          description: "Welcome back to Math Torcher!",
+          description: "Welcome back to Math Torcher!"
         });
         
         // Redirect to the original page the user was trying to visit (or home)
         navigate(from, { replace: true });
       } else {
         toast("Something went wrong", {
-          description: "Please try again.",
-          variant: "destructive",
+          description: "Please try again."
         });
       }
     } catch (error: any) {
       console.error("Sign in error:", error);
       toast("Login failed", {
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive",
+        description: error.message || "An unexpected error occurred"
       });
       throw error; // Rethrow for handling in the parent function
     }
@@ -108,7 +103,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="text-amber-100">Email</Label>
         <Input
           id="email"
           type="email"
@@ -116,13 +111,14 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
+          className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
         />
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-amber-100">Password</Label>
           {mode === "signin" && (
-            <a href="#" className="text-xs text-muted-foreground hover:text-foreground">
+            <a href="#" className="text-xs text-amber-500 hover:text-amber-400 transition-colors">
               Forgot password?
             </a>
           )}
@@ -134,9 +130,10 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
         />
       </div>
-      <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700" disabled={loading}>
+      <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 transition-colors" disabled={loading}>
         {loading
           ? "Processing..."
           : mode === "signin"
