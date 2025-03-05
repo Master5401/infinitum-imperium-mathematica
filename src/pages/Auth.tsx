@@ -9,7 +9,7 @@ const Auth = () => {
   
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 math-pattern">
-      <Card className="mx-auto w-full max-w-md border-amber-600/20 bg-gradient-to-b from-gray-900 to-gray-950">
+      <Card className="mx-auto w-full max-w-md border-amber-600/20 bg-gradient-to-b from-gray-900 to-gray-950 shadow-lg shadow-amber-900/10">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold text-amber-500">Math Torcher</CardTitle>
           <CardDescription className="text-amber-100/70">
@@ -20,9 +20,19 @@ const Auth = () => {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" onValueChange={(value) => setActiveTab(value as "signin" | "signup")}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-gray-800/50">
+              <TabsTrigger 
+                value="signin" 
+                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100"
+              >
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger 
+                value="signup"
+                className="data-[state=active]:bg-amber-900/30 data-[state=active]:text-amber-100"
+              >
+                Sign Up
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="signin">
               <AuthForm mode="signin" />

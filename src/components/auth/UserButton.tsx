@@ -45,13 +45,11 @@ export function UserButton() {
   const handleSignOut = async () => {
     try {
       await supabase.auth.signOut();
-      toast({
-        title: "Signed out",
+      toast("Signed out", {
         description: "You have been successfully signed out.",
       });
     } catch (error: any) {
-      toast({
-        title: "Error signing out",
+      toast("Error signing out", {
         description: error.message,
         variant: "destructive",
       });

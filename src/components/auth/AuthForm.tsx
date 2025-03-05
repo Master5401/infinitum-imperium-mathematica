@@ -21,8 +21,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     e.preventDefault();
     
     if (!email || !password) {
-      toast({
-        title: "Missing fields",
+      toast("Missing fields", {
         description: "Please provide both email and password.",
         variant: "destructive",
       });
@@ -42,23 +41,20 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         
         if (data?.user) {
           if (data.user.identities?.length === 0) {
-            toast({
-              title: "Account already exists",
+            toast("Account already exists", {
               description: "Please sign in instead.",
             });
             return;
           }
 
-          toast({
-            title: "Account created!",
+          toast("Account created!", {
             description: "Welcome to Math Torcher! Please check your email for confirmation.",
           });
           
           // Attempt to sign in immediately if email confirmation is not required
           await handleSignIn();
         } else {
-          toast({
-            title: "Something went wrong",
+          toast("Something went wrong", {
             description: "Please try again.",
             variant: "destructive",
           });
@@ -68,8 +64,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast({
-        title: mode === "signup" ? "Signup failed" : "Login failed",
+      toast(mode === "signup" ? "Signup failed" : "Login failed", {
         description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });
@@ -88,24 +83,21 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       if (error) throw error;
       
       if (data?.user) {
-        toast({
-          title: "Login successful",
+        toast("Login successful", {
           description: "Welcome back to Math Torcher!",
         });
         
         // Redirect to the original page the user was trying to visit (or home)
         navigate(from, { replace: true });
       } else {
-        toast({
-          title: "Something went wrong",
+        toast("Something went wrong", {
           description: "Please try again.",
           variant: "destructive",
         });
       }
     } catch (error: any) {
       console.error("Sign in error:", error);
-      toast({
-        title: "Login failed",
+      toast("Login failed", {
         description: error.message || "An unexpected error occurred",
         variant: "destructive",
       });

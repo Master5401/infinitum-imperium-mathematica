@@ -6,12 +6,8 @@ enabled = true
 port = 54321
 schemas = ["public", "storage", "graphql_public"]
 
-[api.headers]
-Access-Control-Allow-Origin = ["*"]
-
 [db]
 port = 54322
-search_path = ["public", "extensions"]
 major_version = 15
 
 [studio]
@@ -21,4 +17,3 @@ api_url = "http://127.0.0.1"
 
 [functions]
 timeout_seconds = 60
-
