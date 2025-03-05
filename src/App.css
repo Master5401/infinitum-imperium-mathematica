@@ -4,7 +4,7 @@
   min-height: 100vh;
   margin: 0 auto;
   text-align: center;
-  background-color: #1b1c22;
+  background-color: #151619;
   padding: 0;
   overflow-x: hidden;
 }
@@ -68,7 +68,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #1b1c22;
+  background-color: #151619;
   background-image: 
     radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
@@ -80,7 +80,7 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem 1rem;
-  background-color: #1b1c22;
+  background-color: transparent;
 }
 
 @media (min-width: 768px) {
@@ -99,6 +99,18 @@
   }
   100% {
     transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.4;
   }
 }
 
@@ -134,11 +146,50 @@
   animation: shimmer 3s linear infinite;
 }
 
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
 .hover-glow:hover {
   box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+  transform: translateY(-2px);
 }
 
 /* Font for headings */
 .font-cinzel {
   font-family: 'Cinzel', serif;
+}
+
+/* Card hover animations */
+.card-hover-effect {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover-effect:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px -5px rgba(255, 215, 0, 0.1);
+}
+
+/* Progress bar animations */
+@keyframes progress-animation {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200px 0;
+  }
+}
+
+.animated-progress-bar {
+  background-image: linear-gradient(
+    45deg,
+    rgba(255, 215, 0, 0.2) 25%,
+    rgba(255, 215, 0, 0.3) 25%,
+    rgba(255, 215, 0, 0.3) 50%,
+    rgba(255, 215, 0, 0.2) 50%,
+    rgba(255, 215, 0, 0.2) 75%,
+    rgba(255, 215, 0, 0.3) 75%
+  );
+  background-size: 40px 40px;
+  animation: progress-animation 2s linear infinite;
 }

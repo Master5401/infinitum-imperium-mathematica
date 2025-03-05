@@ -39,6 +39,42 @@ export type Database = {
         }
         Relationships: []
       }
+      oeis_sequences: {
+        Row: {
+          created_at: string | null
+          description: string
+          formula: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          oeis_id: string
+          source: string | null
+          values: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          formula?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          oeis_id: string
+          source?: string | null
+          values: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          formula?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          oeis_id?: string
+          source?: string | null
+          values?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

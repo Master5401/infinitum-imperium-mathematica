@@ -17,7 +17,7 @@ function App() {
     <BrowserRouter>
       <div className="app-wrapper">
         <NavBar />
-        <div className="page-content">
+        <main className="page-content">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
@@ -55,7 +55,7 @@ function App() {
             />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </div>
+        </main>
         <Toaster />
       </div>
     </BrowserRouter>
