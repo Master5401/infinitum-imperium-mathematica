@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,11 +8,11 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
   
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-indigo-50 p-4">
-      <Card className="mx-auto w-full max-w-md">
+    <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 math-pattern">
+      <Card className="mx-auto w-full max-w-md border-amber-600/20 bg-gradient-to-b from-gray-900 to-gray-950">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold">Math Torcher</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-bold text-amber-500">Math Torcher</CardTitle>
+          <CardDescription className="text-amber-100/70">
             {activeTab === "signin"
               ? "Sign in to your account to continue"
               : "Create an account to get started"}
@@ -34,7 +33,7 @@ const Auth = () => {
           </Tabs>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <div className="text-center text-sm text-muted-foreground">
+          <div className="text-center text-sm text-amber-100/50">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </div>
         </CardFooter>
