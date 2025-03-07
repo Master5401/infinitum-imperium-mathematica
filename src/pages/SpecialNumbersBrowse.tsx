@@ -13,7 +13,7 @@ interface SpecialNumber {
   number: string;
   name: string;
   description: string;
-  formula: string;
+  formula: string | null;
   author: string;
   created_at: string;
 }
@@ -69,14 +69,25 @@ const SpecialNumbersBrowse = () => {
   return (
     <div className="min-h-screen bg-gray-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-gray-900 to-gray-950 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        <Button
-          variant="ghost"
-          className="mb-6 text-amber-300 hover:text-amber-200"
-          onClick={() => navigate("/special-numbers")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Submit
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="ghost"
+            className="text-amber-300 hover:text-amber-200"
+            onClick={() => navigate("/special-numbers")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Submit
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+            onClick={() => navigate("/special-numbers")}
+          >
+            <Calculator className="h-4 w-4 mr-2" />
+            Submit a Number
+          </Button>
+        </div>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-amber-300 mb-2">Special Numbers Dictionary</h1>
@@ -90,7 +101,7 @@ const SpecialNumbersBrowse = () => {
             placeholder="Search by number, name or description..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+            className="bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
           />
           <Button
             variant="outline"
@@ -122,7 +133,7 @@ const SpecialNumbersBrowse = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredNumbers.map((num) => (
-              <Card key={num.id} className="border-amber-600/20 bg-gradient-to-b from-gray-900 to-gray-950 shadow-lg shadow-amber-900/10">
+              <Card key={num.id} className="border-amber-600/20 bg-gradient-to-b from-gray-900/90 to-gray-950 shadow-lg shadow-amber-900/10">
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div>

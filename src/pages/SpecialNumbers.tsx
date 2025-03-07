@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Brain, ArrowLeft, Calculator, Save, Check, Info } from "lucide-react";
+import { Brain, ArrowLeft, Calculator, Save, Check, Info, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -99,14 +99,24 @@ const SpecialNumbers = () => {
   return (
     <div className="min-h-screen bg-gray-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-gray-900 to-gray-950 py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <Button
-          variant="ghost"
-          className="mb-6 text-amber-300 hover:text-amber-200"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Home
-        </Button>
+        <div className="flex justify-between items-center mb-6">
+          <Button
+            variant="ghost"
+            className="text-amber-300 hover:text-amber-200"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+          <Button
+            variant="outline"
+            className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+            onClick={() => navigate("/special-numbers/browse")}
+          >
+            <BookOpen className="h-4 w-4 mr-2" />
+            Browse Dictionary
+          </Button>
+        </div>
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-amber-300 mb-2">Special Numbers Dictionary</h1>
@@ -130,7 +140,7 @@ const SpecialNumbers = () => {
                   placeholder="e.g. 6, 28, 496"
                   value={number}
                   onChange={(e) => setNumber(e.target.value)}
-                  className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+                  className="bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
                 />
               </div>
               
@@ -140,7 +150,7 @@ const SpecialNumbers = () => {
                   placeholder="e.g. Perfect Number, Armstrong Number"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+                  className="bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
                 />
               </div>
               
@@ -150,7 +160,7 @@ const SpecialNumbers = () => {
                   placeholder="Describe what makes this number special..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="min-h-24 bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+                  className="min-h-24 bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
                 />
               </div>
               
@@ -172,7 +182,7 @@ const SpecialNumbers = () => {
                   placeholder="Enter mathematical formula or use AI to generate it"
                   value={formula || convertedFormula}
                   onChange={(e) => setFormula(e.target.value)}
-                  className="min-h-20 font-mono bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+                  className="min-h-20 font-mono bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
                 />
               </div>
               
@@ -233,17 +243,6 @@ const SpecialNumbers = () => {
                 </div>
               </CardContent>
             </Card>
-
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
-                onClick={() => navigate("/special-numbers/browse")}
-              >
-                <Info className="h-4 w-4 mr-2" />
-                Browse Special Numbers Dictionary
-              </Button>
-            </div>
           </div>
         </div>
       </div>

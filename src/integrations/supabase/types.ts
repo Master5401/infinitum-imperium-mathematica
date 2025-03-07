@@ -135,6 +135,36 @@ export type Database = {
         }
         Relationships: []
       }
+      special_numbers: {
+        Row: {
+          author: string
+          created_at: string
+          description: string
+          formula: string | null
+          id: string
+          name: string
+          number: string
+        }
+        Insert: {
+          author: string
+          created_at?: string
+          description: string
+          formula?: string | null
+          id?: string
+          name: string
+          number: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          description?: string
+          formula?: string | null
+          id?: string
+          name?: string
+          number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
