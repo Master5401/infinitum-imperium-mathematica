@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Hash, Code, ArrowLeft, ArrowRight } from "lucide-react";
+import { Hash, FunctionSquare, ArrowLeft, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Library = () => {
@@ -28,7 +28,7 @@ const Library = () => {
           <Card className="border-purple-600/20 bg-gradient-to-b from-gray-900/90 to-gray-950 shadow-lg shadow-purple-900/10">
             <CardHeader>
               <CardTitle className="text-xl text-purple-300 flex items-center">
-                <Code className="h-5 w-5 mr-2 text-purple-400" />
+                <FunctionSquare className="h-5 w-5 mr-2 text-purple-400" />
                 Mathematical Sequences
               </CardTitle>
               <CardDescription className="text-purple-200/70">
