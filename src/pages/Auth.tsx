@@ -1,11 +1,19 @@
 
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
+  const navigate = useNavigate();
+  
+  const handleGuestAccess = () => {
+    navigate("/");
+  };
   
   return (
     <div className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center p-4 bg-gray-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-gray-900 to-gray-950">
@@ -43,6 +51,14 @@ const Auth = () => {
           </Tabs>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
+          <Button 
+            variant="outline" 
+            className="w-full text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+            onClick={handleGuestAccess}
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Continue as Guest
+          </Button>
           <div className="text-center text-sm text-amber-100/50">
             By continuing, you agree to our Terms of Service and Privacy Policy.
           </div>

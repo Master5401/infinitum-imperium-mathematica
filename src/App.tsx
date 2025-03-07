@@ -6,6 +6,8 @@ import DailyChallenge from "@/pages/DailyChallenge";
 import Library from "@/pages/Library";
 import Learn from "@/pages/Learn";
 import Graphing from "@/pages/Graphing";
+import SpecialNumbers from "@/pages/SpecialNumbers";
+import SpecialNumbersBrowse from "@/pages/SpecialNumbersBrowse";
 import NotFound from "@/pages/NotFound";
 import Auth from "@/pages/Auth";
 import { RequireAuth } from "@/components/auth/RequireAuth";
@@ -24,7 +26,7 @@ function App() {
             <Route 
               path="/daily-challenge" 
               element={
-                <RequireAuth>
+                <RequireAuth guestAllowed={true}>
                   <DailyChallenge />
                 </RequireAuth>
               } 
@@ -32,7 +34,7 @@ function App() {
             <Route 
               path="/library" 
               element={
-                <RequireAuth>
+                <RequireAuth guestAllowed={true}>
                   <Library />
                 </RequireAuth>
               } 
@@ -40,7 +42,7 @@ function App() {
             <Route 
               path="/learn" 
               element={
-                <RequireAuth>
+                <RequireAuth guestAllowed={true}>
                   <Learn />
                 </RequireAuth>
               } 
@@ -48,8 +50,24 @@ function App() {
             <Route 
               path="/graphing" 
               element={
-                <RequireAuth>
+                <RequireAuth guestAllowed={true}>
                   <Graphing />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/special-numbers" 
+              element={
+                <RequireAuth guestAllowed={true}>
+                  <SpecialNumbers />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/special-numbers/browse" 
+              element={
+                <RequireAuth guestAllowed={true}>
+                  <SpecialNumbersBrowse />
                 </RequireAuth>
               } 
             />

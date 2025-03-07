@@ -91,18 +91,15 @@ function convertToLatex(formula: string): string {
     .replace(/delta/g, "\\delta")
     .replace(/epsilon/g, "\\epsilon")
     
-    // Special cases for sequences
-    .replace(/a\(n\)/g, "a_n")
-    .replace(/F\(n\)/g, "F_n")
-    .replace(/T\(n\)/g, "T_n");
-  
-  // Handle special sequences
-  if (latex.includes("Fibonacci")) {
-    latex = latex.replace(
-      /F_n = F_{n-1} \+ F_{n-2}/,
-      "F_n = F_{n-1} + F_{n-2}"
-    );
-  }
+    // Special cases for perfect numbers
+    .replace(/sum of its divisors/gi, "\\sum_{d|n, d \\neq n} d = n")
+    
+    // Special cases for Armstrong numbers
+    .replace(/sum of its digits/gi, "\\sum_{i} d_i")
+    .replace(/each digit raised to power/gi, "\\sum_{i} d_i^k")
+    
+    // Special cases for Harshad numbers
+    .replace(/divisible by the sum of its digits/gi, "n \\mod (\\sum_{i} d_i) = 0");
   
   return latex;
 }

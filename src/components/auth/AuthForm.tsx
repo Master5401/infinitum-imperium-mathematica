@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   const [email, setEmail] = useState("");
@@ -34,6 +35,9 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: window.location.origin
+          }
         });
         
         if (error) throw error;
@@ -62,7 +66,7 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
       }
     } catch (error: any) {
       console.error("Auth error:", error);
-      toast(mode === "signup" ? "Signup failed" : "Login failed", {
+      toast("Authentication failed", {
         description: error.message || "An unexpected error occurred"
       });
     } finally {
@@ -133,12 +137,19 @@ export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
           className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
         />
       </div>
-      <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 transition-colors" disabled={loading}>
-        {loading
-          ? "Processing..."
-          : mode === "signin"
-          ? "Sign In"
-          : "Create Account"}
+      <Button 
+        type="submit" 
+        className="w-full bg-amber-600 hover:bg-amber-700 transition-colors" 
+        disabled={loading}
+      >
+        {loading ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            {mode === "signin" ? "Signing in..." : "Creating account..."}
+          </>
+        ) : (
+          mode === "signin" ? "Sign In" : "Create Account"
+        )}
       </Button>
     </form>
   );
