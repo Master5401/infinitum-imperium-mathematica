@@ -1,192 +1,190 @@
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Search, Loader2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-
-// Fix the import to use named export
+import { Search, Share2, RotateCcw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { SequenceCard } from "@/components/SequenceCard";
 
-// Define the OEISSequence type
 interface OEISSequence {
   id: string;
   oeis_id: string;
   name: string;
   description: string;
   values: string;
-  formula: string | null;
+  formula?: string;
+  source?: string;
 }
 
-export function OEISSequenceSearch() {
+const OEISSequenceSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchProgress, setSearchProgress] = useState(0);
-  const [sequences, setSequences] = useState<OEISSequence[]>([]);
-  const [importingId, setImportingId] = useState<string | null>(null);
+  const [searchResults, setSearchResults] = useState<OEISSequence[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
-      toast("Enter a search term", {
-        description: "Please enter a number sequence or keyword to search."
-      });
+      toast("Please enter a search term");
       return;
     }
 
     setIsSearching(true);
-    setSearchProgress(20);
-    setSequences([]);
-
+    setSearchProgress(10);
+    
     try {
-      // First, check if we already have the sequences in our database
-      const { data: dbSequences, error: dbError } = await supabase
+      // Add to recent searches if not already there
+      if (!recentSearches.includes(searchTerm)) {
+        setRecentSearches(prev => [searchTerm, ...prev].slice(0, 5));
+      }
+      
+      setSearchProgress(30);
+      
+      const { data, error } = await supabase
         .from("oeis_sequences")
         .select("*")
-        .or(`description.ilike.%${searchTerm}%, name.ilike.%${searchTerm}%, values.ilike.%${searchTerm}%`)
-        .limit(10);
-
-      setSearchProgress(40);
-
-      if (dbError) throw dbError;
-
-      if (dbSequences && dbSequences.length > 0) {
-        setSequences(dbSequences);
-        setIsSearching(false);
-        setSearchProgress(100);
-        return;
-      }
-
-      // If not in our database, fetch from OEIS through our function
-      setSearchProgress(60);
+        .ilike("name", `%${searchTerm}%`)
+        .limit(20);
       
-      const { data, error } = await supabase.functions.invoke('import-oeis-sequences', {
-        body: { query: searchTerm }
-      });
-
+      setSearchProgress(70);
+      
       if (error) throw error;
       
-      setSearchProgress(80);
+      setSearchProgress(100);
+      setSearchResults(data || []);
       
-      if (data?.sequences && data.sequences.length > 0) {
-        setSequences(data.sequences);
-      } else {
+      if (data && data.length === 0) {
         toast("No results found", {
-          description: "Try a different search term or try again later."
+          description: "Try different search terms or keywords"
         });
       }
     } catch (error: any) {
       console.error("Search error:", error);
       toast("Search failed", {
-        description: error.message || "Failed to search sequences. Please try again later."
+        description: error.message
       });
     } finally {
-      setIsSearching(false);
-      setSearchProgress(100);
+      setTimeout(() => {
+        setIsSearching(false);
+        setSearchProgress(0);
+      }, 500);
     }
   };
 
-  const importSequence = async (sequence: OEISSequence) => {
-    setImportingId(sequence.id);
-    
-    try {
-      // Check if already imported
-      const { data: existing } = await supabase
-        .from("sequences")
-        .select("id")
-        .eq("title", sequence.name)
-        .single();
-      
-      if (existing) {
-        toast("Already in library", {
-          description: "This sequence has already been imported to your library."
-        });
-        return;
-      }
-      
-      // Import to user sequences
-      const { error } = await supabase
-        .from("sequences")
-        .insert({
-          title: sequence.name,
-          description: sequence.description,
-          formula: sequence.formula || `a(n) = ${sequence.values.split(',')[0]}, ${sequence.values.split(',')[1]}, ${sequence.values.split(',')[2]}, ...`,
-          latex_formula: sequence.formula || `a(n) = ${sequence.values.split(',')[0]}, ${sequence.values.split(',')[1]}, ${sequence.values.split(',')[2]}, ...`,
-          author: "OEIS"
-        });
-      
-      if (error) throw error;
-      
-      toast("Sequence imported", {
-        description: "The sequence has been added to your library."
-      });
-    } catch (error: any) {
-      console.error("Import error:", error);
-      toast("Import failed", {
-        description: error.message || "Failed to import sequence. Please try again later."
-      });
-    } finally {
-      setImportingId(null);
-    }
+  const handleRecentSearchClick = (term: string) => {
+    setSearchTerm(term);
+    handleSearch();
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+    setSearchResults([]);
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="flex gap-2 mb-6">
         <Input
-          placeholder="Search by keywords or number pattern (e.g. '1, 1, 2, 3, 5')"
+          placeholder="Search for mathematical sequences..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           className="bg-gray-800 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
         />
-        <Button 
+        <Button
           onClick={handleSearch}
           disabled={isSearching}
           className="bg-amber-600 hover:bg-amber-700 text-white"
         >
-          {isSearching ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Search className="h-4 w-4 mr-2" />}
-          Search
+          {isSearching ? (
+            <span className="flex items-center">
+              <span className="animate-spin h-4 w-4 mr-2 border-2 border-white border-t-transparent rounded-full" />
+              Searching
+            </span>
+          ) : (
+            <>
+              <Search className="h-4 w-4 mr-2" />
+              Search
+            </>
+          )}
         </Button>
+        {searchResults.length > 0 && (
+          <Button
+            variant="outline"
+            onClick={clearSearch}
+            className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Clear
+          </Button>
+        )}
       </div>
-      
+
       {isSearching && (
-        <Progress value={searchProgress} className="h-1 bg-gray-700" indicatorClassName="bg-amber-500" />
-      )}
-      
-      {sequences.length > 0 && (
-        <div className="space-y-4 mt-4">
-          <h3 className="text-lg font-semibold text-amber-100">Search Results</h3>
-          {sequences.map((sequence) => (
-            <Card key={sequence.id} className="bg-gray-800 border-amber-700/30">
-              <CardContent className="p-4">
-                {/* Pass the sequence as a prop to SequenceCard */}
-                <SequenceCard sequence={sequence} />
-                
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    onClick={() => importSequence(sequence)}
-                    disabled={importingId === sequence.id}
-                    size="sm"
-                    className="bg-amber-600 hover:bg-amber-700 text-white"
-                  >
-                    {importingId === sequence.id ? (
-                      <>
-                        <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                        Importing...
-                      </>
-                    ) : (
-                      "Import to Library"
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="mb-6">
+          <Progress value={searchProgress} className="h-2 bg-gray-700" />
+          <p className="text-xs text-amber-300/70 mt-1">Searching OEIS database...</p>
         </div>
+      )}
+
+      {recentSearches.length > 0 && searchResults.length === 0 && !isSearching && (
+        <div className="mb-6">
+          <h3 className="text-amber-300 mb-2 text-sm">Recent Searches:</h3>
+          <div className="flex flex-wrap gap-2">
+            {recentSearches.map((term, index) => (
+              <Button 
+                key={index} 
+                variant="outline" 
+                size="sm" 
+                className="text-amber-200 border-amber-700/30 hover:bg-amber-900/20"
+                onClick={() => handleRecentSearchClick(term)}
+              >
+                {term}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {searchResults.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl text-amber-300">Search Results</h2>
+            <span className="text-sm text-amber-200/70">{searchResults.length} sequences found</span>
+          </div>
+          
+          <div className="grid gap-4 md:grid-cols-2">
+            {searchResults.map((sequence) => (
+              <SequenceCard key={sequence.id} sequence={sequence} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isSearching && searchResults.length === 0 && (
+        <Card className="border-amber-700/20 bg-gray-800/50">
+          <CardHeader>
+            <CardTitle className="text-amber-300">OEIS Sequence Search</CardTitle>
+            <CardDescription className="text-amber-200/70">
+              Search for mathematical sequences in the Online Encyclopedia of Integer Sequences
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-amber-100/80">
+              Enter keywords, sequence terms, or OEIS A-numbers to find sequences.
+              Try searching for terms like "Fibonacci", "prime", or "A000045".
+            </p>
+          </CardContent>
+          <CardFooter className="text-xs text-amber-200/60 border-t border-amber-700/10 pt-4">
+            <Share2 className="h-3 w-3 mr-1" /> Data sourced from the Online Encyclopedia of Integer Sequences® (OEIS®)
+          </CardFooter>
+        </Card>
       )}
     </div>
   );
-}
+};
+
+export default OEISSequenceSearch;

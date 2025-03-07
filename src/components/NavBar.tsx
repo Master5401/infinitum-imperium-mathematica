@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Home, BookOpen, PenTool, Compass } from "lucide-react";
+import { Home, BookOpen, PenTool, Compass, Hash } from "lucide-react";
 import { UserButton } from "@/components/auth/UserButton";
 
 export default function NavBar() {
@@ -23,6 +23,10 @@ export default function NavBar() {
             <Link to="/library" className="transition-colors hover:text-amber-400 text-amber-100/90 flex items-center gap-1">
               <BookOpen className="h-4 w-4" />
               <span>Library</span>
+            </Link>
+            <Link to="/special-numbers" className="transition-colors hover:text-amber-400 text-amber-100/90 flex items-center gap-1">
+              <Hash className="h-4 w-4" />
+              <span>Special Numbers</span>
             </Link>
           </nav>
         </div>
