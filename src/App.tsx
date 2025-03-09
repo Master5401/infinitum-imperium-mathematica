@@ -8,6 +8,7 @@ import Learn from "@/pages/Learn";
 import Graphing from "@/pages/Graphing";
 import SpecialNumbers from "@/pages/SpecialNumbers";
 import SpecialNumbersBrowse from "@/pages/SpecialNumbersBrowse";
+import SequenceSubmit from "@/pages/SequenceSubmit";
 import NotFound from "@/pages/NotFound";
 import Auth from "@/pages/Auth";
 import { RequireAuth } from "@/components/auth/RequireAuth";
@@ -68,6 +69,14 @@ function App() {
               element={
                 <RequireAuth guestAllowed={true}>
                   <SpecialNumbersBrowse />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/sequences" 
+              element={
+                <RequireAuth guestAllowed={true}>
+                  <SequenceSubmit />
                 </RequireAuth>
               } 
             />
