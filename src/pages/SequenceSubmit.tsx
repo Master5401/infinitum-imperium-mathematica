@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Sigma, Calculator, Save, Check, Function, BookOpen } from "lucide-react";
+import { ArrowLeft, Sigma, Calculator, Save, Check, Code, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -112,7 +111,7 @@ const SequenceSubmit = () => {
               className="border-red-700/30 bg-red-900/20 text-red-300 hover:bg-red-900/30 hover:text-red-200"
               onClick={() => window.open("https://en.wikipedia.org/wiki/List_of_mathematical_symbols", "_blank")}
             >
-              <Function className="h-4 w-4 mr-2" />
+              <Code className="h-4 w-4 mr-2" />
               Symbol Reference
             </Button>
           </div>
