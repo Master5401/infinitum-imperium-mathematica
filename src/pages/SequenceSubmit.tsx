@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,8 @@ const SequenceSubmit = () => {
   const [description, setDescription] = useState<string>("");
   const [formula, setFormula] = useState<string>("");
   const [latexFormula, setLatexFormula] = useState<string>("");
+  const [exampleValues, setExampleValues] = useState<string>("");
+  const [complexity, setComplexity] = useState<number>(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -61,15 +64,20 @@ const SequenceSubmit = () => {
     try {
       const { data: session } = await supabase.auth.getSession();
       const userId = session?.session?.user?.id;
+      const authorName = userId ? (session?.session?.user?.email?.split('@')[0] || 'User') : 'Guest';
 
       const { error } = await supabase
-        .from("sequences")
+        .from("sequences_library")
         .insert({
-          title: title,
-          description: description,
-          formula: formula,
+          title,
+          description,
+          formula,
           latex_formula: latexFormula || formula,
-          author: userId || "guest",
+          example_values: exampleValues,
+          complexity,
+          author: userId || null,
+          author_name: authorName,
+          tags: [],
         });
 
       if (error) throw error;
@@ -83,6 +91,11 @@ const SequenceSubmit = () => {
       setDescription("");
       setFormula("");
       setLatexFormula("");
+      setExampleValues("");
+      setComplexity(1);
+      
+      // Navigate to library view
+      navigate("/library");
     } catch (error: any) {
       console.error("Submission error:", error);
       toast("Submission failed", {
@@ -175,6 +188,28 @@ const SequenceSubmit = () => {
                   value={formula}
                   onChange={(e) => setFormula(e.target.value)}
                   className="min-h-16 font-mono bg-gray-800/50 border-red-700/30 text-red-100 placeholder:text-red-100/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-red-200">Example Values</label>
+                <Input
+                  placeholder="e.g. 1, 1, 2, 3, 5, 8, 13, ..."
+                  value={exampleValues}
+                  onChange={(e) => setExampleValues(e.target.value)}
+                  className="bg-gray-800/50 border-red-700/30 text-red-100 placeholder:text-red-100/50"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-red-200">Complexity Level (1-5)</label>
+                <Input 
+                  type="number"
+                  min={1}
+                  max={5}
+                  value={complexity}
+                  onChange={(e) => setComplexity(Math.min(5, Math.max(1, parseInt(e.target.value) || 1)))}
+                  className="bg-gray-800/50 border-red-700/30 text-red-100"
                 />
               </div>
               

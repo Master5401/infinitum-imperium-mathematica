@@ -135,6 +135,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sequences_library: {
+        Row: {
+          author: string | null
+          author_name: string
+          complexity: number
+          created_at: string
+          description: string
+          example_values: string | null
+          formula: string
+          id: string
+          latex_formula: string
+          tags: string[] | null
+          title: string
+          votes: number | null
+        }
+        Insert: {
+          author?: string | null
+          author_name: string
+          complexity?: number
+          created_at?: string
+          description: string
+          example_values?: string | null
+          formula: string
+          id?: string
+          latex_formula: string
+          tags?: string[] | null
+          title: string
+          votes?: number | null
+        }
+        Update: {
+          author?: string | null
+          author_name?: string
+          complexity?: number
+          created_at?: string
+          description?: string
+          example_values?: string | null
+          formula?: string
+          id?: string
+          latex_formula?: string
+          tags?: string[] | null
+          title?: string
+          votes?: number | null
+        }
+        Relationships: []
+      }
       special_numbers: {
         Row: {
           author: string
