@@ -14,12 +14,12 @@ const SequenceSubmit = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-950/60 via-gray-900 to-gray-950 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex justify-between items-center mb-6">
           <Button
             variant="ghost"
-            className="text-red-300 hover:text-red-200"
+            className="text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
             onClick={() => navigate("/library")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -28,7 +28,7 @@ const SequenceSubmit = () => {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              className="border-red-700/40 bg-red-900/30 text-red-300 hover:bg-red-900/40 hover:text-red-200"
+              className="border-gray-300 bg-white/80 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-700/80"
               onClick={() => window.open("https://en.wikipedia.org/wiki/List_of_mathematical_symbols", "_blank")}
             >
               <Code className="h-4 w-4 mr-2" />
@@ -38,8 +38,8 @@ const SequenceSubmit = () => {
         </div>
 
         <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-red-300 mb-2 font-cinzel">Sequence Submission</h1>
-          <p className="text-red-200/90 max-w-2xl mx-auto font-sorts-mill">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2 font-cinzel">Sequence Submission</h1>
+          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-sorts-mill">
             Add your mathematical sequences to our growing collection for others to discover and explore.
           </p>
         </div>
