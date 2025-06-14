@@ -5,8 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import DailyChallenge from "./pages/DailyChallenge";
 import Library from "./pages/Library";
 import SequenceSubmit from "./pages/SequenceSubmit";
@@ -32,6 +34,11 @@ function App() {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
                 <Route path="/daily-challenge" element={<DailyChallenge />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/sequences" element={<SequenceSubmit />} />
@@ -39,7 +46,11 @@ function App() {
                 <Route path="/special-numbers/browse" element={<SpecialNumbersBrowse />} />
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/graphing" element={<Graphing />} />
-                <Route path="/gamification" element={<Gamification />} />
+                <Route path="/gamification" element={
+                  <ProtectedRoute>
+                    <Gamification />
+                  </ProtectedRoute>
+                } />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

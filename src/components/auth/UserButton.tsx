@@ -13,7 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings, User, Trophy } from "lucide-react";
 
 export function UserButton() {
   const [user, setUser] = useState<any>(null);
@@ -85,9 +85,17 @@ export function UserButton() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-amber-700/20" />
-        <DropdownMenuItem className="text-amber-100/90 focus:bg-amber-800/30 focus:text-amber-100">
-          <User className="mr-2 h-4 w-4 text-amber-500" />
-          <span>Profile</span>
+        <DropdownMenuItem className="text-amber-100/90 focus:bg-amber-800/30 focus:text-amber-100" asChild>
+          <Link to="/profile" className="flex items-center">
+            <User className="mr-2 h-4 w-4 text-amber-500" />
+            <span>Profile</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="text-amber-100/90 focus:bg-amber-800/30 focus:text-amber-100" asChild>
+          <Link to="/gamification" className="flex items-center">
+            <Trophy className="mr-2 h-4 w-4 text-amber-500" />
+            <span>Achievements</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="text-amber-100/90 focus:bg-amber-800/30 focus:text-amber-100">
           <Settings className="mr-2 h-4 w-4 text-amber-500" />
