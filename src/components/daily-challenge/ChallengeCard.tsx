@@ -42,7 +42,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         <CardContent>
           <div className="flex items-center justify-center py-12">
             <Brain className="h-8 w-8 text-amber-400 animate-spin" />
-            <span className="ml-3 text-amber-300">Loading challenge...</span>
+            <span className="ml-3 text-amber-300">Loading today's challenge...</span>
           </div>
         </CardContent>
       </Card>
@@ -62,7 +62,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-center py-12 text-amber-300">
-            <p>Failed to load challenge. Please try refreshing the page.</p>
+            <p>Unable to load today's challenge. Please refresh the page to try again.</p>
           </div>
         </CardContent>
       </Card>

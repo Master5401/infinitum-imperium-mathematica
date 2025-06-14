@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +19,54 @@ const DailyChallenge = () => {
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
   const [animateIn, setAnimateIn] = useState(false);
+  const [isUsingFallback, setIsUsingFallback] = useState(false);
   const { toast } = useToast();
+
+  const getFallbackChallenge = (): Challenge => {
+    const fallbackChallenges = [
+      {
+        id: "fallback-1",
+        sequence: "1, 1, 2, 3, 5, 8, 13, 21, ...",
+        hints: [
+          "Add the two previous terms to get the next one",
+          "It's a famous sequence named after an Italian mathematician",
+          "The ratio of consecutive terms approaches the golden ratio"
+        ],
+        difficulty: 3,
+        solution: "Fibonacci sequence: F(n) = F(n-1) + F(n-2) with F(0) = 0, F(1) = 1",
+        created_at: new Date().toISOString()
+      },
+      {
+        id: "fallback-2",
+        sequence: "2, 4, 16, 256, 65536, ...",
+        hints: [
+          "Consider powers",
+          "Look at how each term relates to the previous one",
+          "Each term is the previous term raised to a power of 2"
+        ],
+        difficulty: 7,
+        solution: "a(n) = 2^(2^(n-1)) for n ≥ 1",
+        created_at: new Date().toISOString()
+      },
+      {
+        id: "fallback-3",
+        sequence: "1, 4, 9, 16, 25, 36, ...",
+        hints: [
+          "Look at the pattern of differences between consecutive terms",
+          "Think about operations that result in these values",
+          "Think of geometric shapes"
+        ],
+        difficulty: 2,
+        solution: "Square numbers: a(n) = n²",
+        created_at: new Date().toISOString()
+      }
+    ];
+    
+    // Rotate through fallback challenges based on the day
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+    return fallbackChallenges[dayOfYear % fallbackChallenges.length];
+  };
 
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -53,11 +101,19 @@ const DailyChallenge = () => {
             solution: dbChallenge.solution,
             created_at: dbChallenge.created_at
           });
+          setIsUsingFallback(false);
         } else {
           console.log("No existing challenge found, attempting to generate new one...");
-          // Otherwise, try to generate a new one
+          // Try to generate a new one, but with timeout
           try {
-            const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+            
+            const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge', {
+              signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
             
             if (generateError) {
               console.error("Edge function error:", generateError);
@@ -66,58 +122,47 @@ const DailyChallenge = () => {
             
             if (generatedData && generatedData.challenge) {
               console.log("Generated new challenge:", generatedData.challenge);
-              // Store the generated challenge in the database
-              const challengeInsert: Database['public']['Tables']['daily_challenges']['Insert'] = {
-                sequence: generatedData.challenge.sequence,
-                hints: generatedData.challenge.hints,
-                difficulty: generatedData.challenge.difficulty,
-                solution: generatedData.challenge.solution,
-                date: today
-              };
               
-              const { error: insertError } = await supabase
-                .from('daily_challenges')
-                .insert(challengeInsert);
+              // Try to store the generated challenge in the database (but don't fail if this doesn't work)
+              try {
+                const challengeInsert: Database['public']['Tables']['daily_challenges']['Insert'] = {
+                  sequence: generatedData.challenge.sequence,
+                  hints: generatedData.challenge.hints,
+                  difficulty: generatedData.challenge.difficulty,
+                  solution: generatedData.challenge.solution,
+                  date: today
+                };
                 
-              if (insertError) {
-                console.error("Insert error:", insertError);
-                // Don't throw here, just log and use the generated challenge
+                const { error: insertError } = await supabase
+                  .from('daily_challenges')
+                  .insert(challengeInsert);
+                  
+                if (insertError) {
+                  console.error("Insert error (non-critical):", insertError);
+                }
+              } catch (insertError) {
+                console.error("Failed to store challenge (non-critical):", insertError);
               }
               
               setChallenge(generatedData.challenge);
+              setIsUsingFallback(false);
             } else {
               throw new Error("No challenge data received from edge function");
             }
           } catch (edgeFunctionError) {
-            console.error("Edge function failed, using fallback:", edgeFunctionError);
-            // Use fallback challenge
-            throw edgeFunctionError;
+            console.log("Edge function failed, using fallback challenge:", edgeFunctionError);
+            // Use fallback challenge without showing error to user
+            setChallenge(getFallbackChallenge());
+            setIsUsingFallback(true);
           }
         }
       } catch (error) {
         console.error("Error fetching daily challenge:", error);
         
-        // Show toast notification about the error
-        toast({
-          title: "Connection Issue",
-          description: "Using a fallback challenge while we resolve connectivity issues.",
-          variant: "default",
-        });
-        
-        // Fallback challenge - ensure this always works
-        console.log("Using fallback challenge");
-        setChallenge({
-          id: "fallback",
-          sequence: "2, 4, 16, 256, 65536, ...",
-          hints: [
-            "Consider powers",
-            "Look at how each term relates to the previous one",
-            "Each term is the previous term raised to a power of 2"
-          ],
-          difficulty: 7,
-          solution: "a(n) = 2^(2^(n-1)) for n ≥ 1",
-          created_at: new Date().toISOString()
-        });
+        // Always fallback gracefully without alarming the user
+        console.log("Using fallback challenge due to error");
+        setChallenge(getFallbackChallenge());
+        setIsUsingFallback(true);
       } finally {
         setLoading(false);
         setTimeout(() => setAnimateIn(true), 100);
@@ -134,7 +179,7 @@ const DailyChallenge = () => {
     setShowHint(true);
   };
 
-  console.log("Current state:", { loading, challenge, animateIn });
+  console.log("Current state:", { loading, challenge: !!challenge, animateIn, isUsingFallback });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1b1c22] to-[#272331] math-pattern">
