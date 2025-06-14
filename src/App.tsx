@@ -1,91 +1,52 @@
 
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import Index from "@/pages/Index";
-import DailyChallenge from "@/pages/DailyChallenge";
-import Library from "@/pages/Library";
-import Learn from "@/pages/Learn";
-import Graphing from "@/pages/Graphing";
-import SpecialNumbers from "@/pages/SpecialNumbers";
-import SpecialNumbersBrowse from "@/pages/SpecialNumbersBrowse";
-import SequenceSubmit from "@/pages/SequenceSubmit";
-import NotFound from "@/pages/NotFound";
-import Auth from "@/pages/Auth";
-import { RequireAuth } from "@/components/auth/RequireAuth";
-import NavBar from "@/components/NavBar";
-import "./App.css";
+import { NavBar } from "./components/NavBar";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import DailyChallenge from "./pages/DailyChallenge";
+import Library from "./pages/Library";
+import SequenceSubmit from "./pages/SequenceSubmit";
+import SpecialNumbers from "./pages/SpecialNumbers";
+import SpecialNumbersBrowse from "./pages/SpecialNumbersBrowse";
+import Learn from "./pages/Learn";
+import Graphing from "./pages/Graphing";
+import Gamification from "./pages/Gamification";
+import NotFound from "./pages/NotFound";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="app-wrapper">
-        <NavBar />
-        <main className="page-content">
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route 
-              path="/daily-challenge" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <DailyChallenge />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/library" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <Library />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/learn" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <Learn />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/graphing" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <Graphing />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/special-numbers" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <SpecialNumbers />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/special-numbers/browse" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <SpecialNumbersBrowse />
-                </RequireAuth>
-              } 
-            />
-            <Route 
-              path="/sequences" 
-              element={
-                <RequireAuth guestAllowed={true}>
-                  <SequenceSubmit />
-                </RequireAuth>
-              } 
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
         <Toaster />
-      </div>
-    </BrowserRouter>
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen bg-background">
+            <NavBar />
+            <main>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/daily-challenge" element={<DailyChallenge />} />
+                <Route path="/library" element={<Library />} />
+                <Route path="/sequences" element={<SequenceSubmit />} />
+                <Route path="/special-numbers" element={<SpecialNumbers />} />
+                <Route path="/special-numbers/browse" element={<SpecialNumbersBrowse />} />
+                <Route path="/learn" element={<Learn />} />
+                <Route path="/graphing" element={<Graphing />} />
+                <Route path="/gamification" element={<Gamification />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+          </div>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
