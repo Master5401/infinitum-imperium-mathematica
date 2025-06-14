@@ -17,7 +17,7 @@ interface ChallengeCardProps {
   loading: boolean;
   challenge: Challenge | null;
   animateIn: boolean;
-  children?: React.ReactNode; // Add children prop to fix TypeScript error
+  children?: React.ReactNode;
 }
 
 const ChallengeCard: React.FC<ChallengeCardProps> = ({
@@ -26,6 +26,8 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
   animateIn,
   children,
 }) => {
+  console.log("ChallengeCard render:", { loading, hasChallenge: !!challenge, animateIn });
+
   if (loading) {
     return (
       <Card className={`bg-[#1b1c22]/80 border-amber-900/30 shadow-2xl backdrop-blur-sm transition-all duration-700 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -40,6 +42,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         <CardContent>
           <div className="flex items-center justify-center py-12">
             <Brain className="h-8 w-8 text-amber-400 animate-spin" />
+            <span className="ml-3 text-amber-300">Loading challenge...</span>
           </div>
         </CardContent>
       </Card>
@@ -59,7 +62,7 @@ const ChallengeCard: React.FC<ChallengeCardProps> = ({
         </CardHeader>
         <CardContent>
           <div className="text-center py-12 text-amber-300">
-            Failed to load challenge. Please try again later.
+            <p>Failed to load challenge. Please try refreshing the page.</p>
           </div>
         </CardContent>
       </Card>

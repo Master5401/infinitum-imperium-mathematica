@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,19 +24,26 @@ const DailyChallenge = () => {
     const fetchChallenge = async () => {
       try {
         setLoading(true);
+        console.log("Fetching daily challenge...");
         
         // First try to get today's challenge from the database
         const today = new Date().toISOString().split('T')[0];
+        console.log("Looking for challenge for date:", today);
+        
         const { data, error } = await supabase
           .from('daily_challenges')
           .select('*')
           .eq('date', today)
           .limit(1);
           
-        if (error) throw error;
+        if (error) {
+          console.error("Database error:", error);
+          throw error;
+        }
         
         // If we have a challenge for today, use it
         if (data && data.length > 0) {
+          console.log("Found existing challenge in database:", data[0]);
           const dbChallenge: DailyChallengeRow = data[0];
           setChallenge({
             id: dbChallenge.id,
@@ -48,40 +54,60 @@ const DailyChallenge = () => {
             created_at: dbChallenge.created_at
           });
         } else {
-          // Otherwise, generate a new one
-          const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge');
-          
-          if (generateError) throw generateError;
-          
-          if (generatedData && generatedData.challenge) {
-            // Store the generated challenge in the database
-            const challengeInsert: Database['public']['Tables']['daily_challenges']['Insert'] = {
-              sequence: generatedData.challenge.sequence,
-              hints: generatedData.challenge.hints,
-              difficulty: generatedData.challenge.difficulty,
-              solution: generatedData.challenge.solution,
-              date: today
-            };
+          console.log("No existing challenge found, attempting to generate new one...");
+          // Otherwise, try to generate a new one
+          try {
+            const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge');
             
-            const { error: insertError } = await supabase
-              .from('daily_challenges')
-              .insert(challengeInsert);
+            if (generateError) {
+              console.error("Edge function error:", generateError);
+              throw generateError;
+            }
+            
+            if (generatedData && generatedData.challenge) {
+              console.log("Generated new challenge:", generatedData.challenge);
+              // Store the generated challenge in the database
+              const challengeInsert: Database['public']['Tables']['daily_challenges']['Insert'] = {
+                sequence: generatedData.challenge.sequence,
+                hints: generatedData.challenge.hints,
+                difficulty: generatedData.challenge.difficulty,
+                solution: generatedData.challenge.solution,
+                date: today
+              };
               
-            if (insertError) throw insertError;
-            
-            setChallenge(generatedData.challenge);
+              const { error: insertError } = await supabase
+                .from('daily_challenges')
+                .insert(challengeInsert);
+                
+              if (insertError) {
+                console.error("Insert error:", insertError);
+                // Don't throw here, just log and use the generated challenge
+              }
+              
+              setChallenge(generatedData.challenge);
+            } else {
+              throw new Error("No challenge data received from edge function");
+            }
+          } catch (edgeFunctionError) {
+            console.error("Edge function failed, using fallback:", edgeFunctionError);
+            // Use fallback challenge
+            throw edgeFunctionError;
           }
         }
       } catch (error) {
         console.error("Error fetching daily challenge:", error);
+        
+        // Show toast notification about the error
         toast({
-          title: "Error",
-          description: "Failed to load daily challenge. Please try again later.",
-          variant: "destructive",
+          title: "Connection Issue",
+          description: "Using a fallback challenge while we resolve connectivity issues.",
+          variant: "default",
         });
         
-        // Fallback challenge
+        // Fallback challenge - ensure this always works
+        console.log("Using fallback challenge");
         setChallenge({
+          id: "fallback",
           sequence: "2, 4, 16, 256, 65536, ...",
           hints: [
             "Consider powers",
@@ -89,7 +115,8 @@ const DailyChallenge = () => {
             "Each term is the previous term raised to a power of 2"
           ],
           difficulty: 7,
-          solution: "a(n) = 2^(2^(n-1)) for n ≥ 1"
+          solution: "a(n) = 2^(2^(n-1)) for n ≥ 1",
+          created_at: new Date().toISOString()
         });
       } finally {
         setLoading(false);
@@ -106,6 +133,8 @@ const DailyChallenge = () => {
     }
     setShowHint(true);
   };
+
+  console.log("Current state:", { loading, challenge, animateIn });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1b1c22] to-[#272331] math-pattern">
