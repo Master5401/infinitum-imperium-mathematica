@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import ChallengeCard, { Challenge } from "@/components/daily-challenge/ChallengeCard";
+import MobileChallengeCard from "@/components/daily-challenge/MobileChallengeCard";
 import HintsSection from "@/components/daily-challenge/HintsSection";
 import SolutionDisplay from "@/components/daily-challenge/SolutionDisplay";
 import ActionButtons from "@/components/daily-challenge/ActionButtons";
 import SequenceVisualizer from "@/components/daily-challenge/SequenceVisualizer";
 import SequenceAnalysis from "@/components/daily-challenge/SequenceAnalysis";
+import AIAssistant from "@/components/daily-challenge/AIAssistant";
 import type { Database } from "@/integrations/supabase/types";
 
 type DailyChallengeRow = Database['public']['Tables']['daily_challenges']['Row'];
@@ -185,41 +187,75 @@ const DailyChallenge = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1b1c22] to-[#272331] math-pattern">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Mobile-optimized container */}
+      <div className="max-w-4xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <ActionButtons />
 
-        <ChallengeCard 
-          loading={loading} 
-          challenge={challenge} 
-          animateIn={animateIn}
-        >
-          {challenge && (
-            <>
-              {/* Add Sequence Visualizer */}
-              <SequenceVisualizer sequence={challenge.sequence} />
-              
-              {/* Add AI Analysis */}
-              <SequenceAnalysis sequence={challenge.sequence} />
-              
-              <HintsSection 
-                hints={challenge.hints}
-                currentHintIndex={currentHintIndex}
-                showHint={showHint}
-                onShowNextHint={showNextHint}
-              />
+        {/* Responsive challenge card */}
+        <div className="block sm:hidden">
+          {/* Mobile version */}
+          <MobileChallengeCard 
+            loading={loading} 
+            challenge={challenge} 
+            animateIn={animateIn}
+          >
+            {challenge && (
+              <>
+                <SequenceVisualizer sequence={challenge.sequence} />
+                <AIAssistant sequence={challenge.sequence} isMobile={true} />
+                <SequenceAnalysis sequence={challenge.sequence} />
+                
+                <div className="space-y-4">
+                  <HintsSection 
+                    hints={challenge.hints}
+                    currentHintIndex={currentHintIndex}
+                    showHint={showHint}
+                    onShowNextHint={showNextHint}
+                  />
+                  
+                  <SolutionDisplay 
+                    solution={challenge.solution}
+                    showSolution={showSolution}
+                    onToggleSolution={() => setShowSolution(!showSolution)}
+                  />
+                </div>
+              </>
+            )}
+          </MobileChallengeCard>
+        </div>
 
-              <div className="flex items-center justify-between">
-                {/* Left side placeholder for layout balance */}
-                <div></div>
-                <SolutionDisplay 
-                  solution={challenge.solution}
-                  showSolution={showSolution}
-                  onToggleSolution={() => setShowSolution(!showSolution)}
+        <div className="hidden sm:block">
+          {/* Desktop version */}
+          <ChallengeCard 
+            loading={loading} 
+            challenge={challenge} 
+            animateIn={animateIn}
+          >
+            {challenge && (
+              <>
+                <SequenceVisualizer sequence={challenge.sequence} />
+                <AIAssistant sequence={challenge.sequence} isMobile={false} />
+                <SequenceAnalysis sequence={challenge.sequence} />
+                
+                <HintsSection 
+                  hints={challenge.hints}
+                  currentHintIndex={currentHintIndex}
+                  showHint={showHint}
+                  onShowNextHint={showNextHint}
                 />
-              </div>
-            </>
-          )}
-        </ChallengeCard>
+
+                <div className="flex items-center justify-between">
+                  <div></div>
+                  <SolutionDisplay 
+                    solution={challenge.solution}
+                    showSolution={showSolution}
+                    onToggleSolution={() => setShowSolution(!showSolution)}
+                  />
+                </div>
+              </>
+            )}
+          </ChallengeCard>
+        </div>
       </div>
     </div>
   );

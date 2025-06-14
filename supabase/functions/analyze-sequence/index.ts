@@ -7,173 +7,92 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { sequence } = await req.json();
-    
-    if (!sequence) {
+    const { sequence, question, context } = await req.json();
+
+    if (!openAIApiKey) {
       return new Response(
         JSON.stringify({ 
-          error: "Missing sequence parameter" 
+          analysis: "AI analysis is currently unavailable. The OpenAI API key is not configured. Please check back later." 
         }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );
     }
+
+    const systemPrompt = `You are an expert mathematician and sequence analyst with deep knowledge of:
+    - Number theory and mathematical sequences (Fibonacci, primes, triangular, etc.)
+    - Pattern recognition and mathematical relationships
+    - OEIS (Online Encyclopedia of Integer Sequences) database
+    - Advanced mathematical concepts and their applications
     
-    console.log("Analyzing sequence:", sequence);
+    Provide clear, educational, and insightful analysis. Be engaging and help users understand the beauty of mathematics.
     
-    // Simple algorithm to detect common sequences
-    // In a real application, you'd use a more sophisticated approach or an AI model
-    const analysis = analyzeSequence(sequence);
+    Sequence being analyzed: ${sequence}
+    Analysis context: ${context || 'daily mathematical challenge'}`;
+
+    const userPrompt = question || `Please analyze this mathematical sequence: ${sequence}
+
+    Provide a comprehensive analysis including:
+    1. Pattern identification and mathematical rule
+    2. Next few terms if possible
+    3. Mathematical properties and significance
+    4. Connections to famous sequences or mathematical concepts
+    5. Any interesting observations or insights
     
-    return new Response(
-      JSON.stringify({
-        analysis
+    Make your explanation clear and educational.`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 1200,
       }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`OpenAI API error: ${response.status} - ${errorText}`);
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const analysis = data.choices[0]?.message?.content || "I'm unable to provide a detailed analysis of this sequence right now. Please try again later.";
+
+    return new Response(
+      JSON.stringify({ analysis }),
       {
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   } catch (error) {
-    console.error("Error analyzing sequence:", error);
+    console.error("Error in analyze-sequence function:", error);
     
     return new Response(
       JSON.stringify({
-        error: "Failed to analyze sequence"
+        analysis: "I'm experiencing technical difficulties analyzing this sequence. This could be due to API limitations or connectivity issues. Please try again in a few moments."
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   }
 });
-
-function analyzeSequence(sequenceStr: string) {
-  // Parse the sequence
-  const numbers = sequenceStr
-    .split(",")
-    .map(s => s.trim())
-    .filter(s => !s.includes("...")) // Remove ellipsis entries
-    .map(s => parseFloat(s));
-  
-  if (numbers.length < 3) {
-    return {
-      pattern: "Unknown",
-      description: "Need at least 3 terms to identify a pattern",
-      formula: "Insufficient data",
-      confidence: 0
-    };
-  }
-  
-  // Check for arithmetic sequence (constant difference)
-  const firstDiff = numbers[1] - numbers[0];
-  let isArithmetic = true;
-  
-  for (let i = 2; i < numbers.length; i++) {
-    if (Math.abs((numbers[i] - numbers[i-1]) - firstDiff) > 0.0001) {
-      isArithmetic = false;
-      break;
-    }
-  }
-  
-  if (isArithmetic) {
-    return {
-      pattern: "Arithmetic Sequence",
-      description: `Terms increase by a constant difference of ${firstDiff}`,
-      formula: `a(n) = ${numbers[0]} + (n-1) * ${firstDiff}`,
-      confidence: 0.9
-    };
-  }
-  
-  // Check for geometric sequence (constant ratio)
-  const firstRatio = numbers[1] / numbers[0];
-  let isGeometric = true;
-  
-  for (let i = 2; i < numbers.length; i++) {
-    if (Math.abs((numbers[i] / numbers[i-1]) - firstRatio) > 0.0001) {
-      isGeometric = false;
-      break;
-    }
-  }
-  
-  if (isGeometric) {
-    return {
-      pattern: "Geometric Sequence",
-      description: `Terms increase by a constant ratio of ${firstRatio.toFixed(2)}`,
-      formula: `a(n) = ${numbers[0]} * ${firstRatio.toFixed(2)}^(n-1)`,
-      confidence: 0.9
-    };
-  }
-  
-  // Check for square numbers
-  let isSquare = true;
-  for (let i = 0; i < numbers.length; i++) {
-    if (Math.abs(Math.sqrt(numbers[i]) - Math.round(Math.sqrt(numbers[i]))) > 0.0001) {
-      isSquare = false;
-      break;
-    }
-  }
-  
-  if (isSquare) {
-    return {
-      pattern: "Square Numbers",
-      description: "Each term is a perfect square",
-      formula: "a(n) = n²",
-      confidence: 0.8
-    };
-  }
-  
-  // Check for Fibonacci-like sequence (each term is the sum of the two preceding ones)
-  let isFibonacci = true;
-  for (let i = 2; i < numbers.length; i++) {
-    if (Math.abs((numbers[i-1] + numbers[i-2]) - numbers[i]) > 0.0001) {
-      isFibonacci = false;
-      break;
-    }
-  }
-  
-  if (isFibonacci) {
-    return {
-      pattern: "Fibonacci-like Sequence",
-      description: "Each term is the sum of the two preceding terms",
-      formula: `F(n) = F(n-1) + F(n-2) with F(1) = ${numbers[0]}, F(2) = ${numbers[1]}`,
-      confidence: 0.85
-    };
-  }
-  
-  // Check for cubic numbers
-  let isCubic = true;
-  for (let i = 0; i < numbers.length; i++) {
-    const cbrt = Math.cbrt(numbers[i]);
-    if (Math.abs(cbrt - Math.round(cbrt)) > 0.0001) {
-      isCubic = false;
-      break;
-    }
-  }
-  
-  if (isCubic) {
-    return {
-      pattern: "Cubic Numbers",
-      description: "Each term is a perfect cube",
-      formula: "a(n) = n³",
-      confidence: 0.8
-    };
-  }
-  
-  // If no specific pattern is recognized
-  return {
-    pattern: "Complex Pattern",
-    description: "This appears to be a more complex or custom sequence",
-    formula: "Could not determine a simple formula",
-    confidence: 0.3
-  };
-}

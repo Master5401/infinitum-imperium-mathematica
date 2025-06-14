@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface HintsSectionProps {
   hints: string[];
@@ -16,6 +17,8 @@ const HintsSection: React.FC<HintsSectionProps> = ({
   showHint,
   onShowNextHint,
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <div className="space-y-4">
       {showHint && hints.slice(0, currentHintIndex + 1).map((hint, index) => (
@@ -25,15 +28,15 @@ const HintsSection: React.FC<HintsSectionProps> = ({
         >
           <div className="flex items-center text-amber-300 mb-2">
             <Lightbulb className="h-4 w-4 mr-2" />
-            <span className="font-medium">Hint {index + 1}</span>
+            <span className={`font-medium ${isMobile ? 'text-sm' : ''}`}>Hint {index + 1}</span>
           </div>
-          <p className="text-amber-200">{hint}</p>
+          <p className={`text-amber-200 ${isMobile ? 'text-sm' : ''}`}>{hint}</p>
         </div>
       ))}
       
       <Button
         variant="outline"
-        className="text-amber-300 border-amber-900/30 hover:bg-amber-900/20 hover:text-amber-200 transition-all duration-300"
+        className={`text-amber-300 border-amber-900/30 hover:bg-amber-900/20 hover:text-amber-200 transition-all duration-300 ${isMobile ? 'w-full text-sm' : ''}`}
         onClick={onShowNextHint}
         disabled={showHint && currentHintIndex >= hints.length - 1}
       >
