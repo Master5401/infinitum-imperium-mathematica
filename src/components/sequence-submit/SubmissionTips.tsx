@@ -4,25 +4,34 @@ import { LightbulbIcon } from "lucide-react";
 
 export const SubmissionTips = () => {
   return (
-    <Card className="border-gray-600/30 bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 shadow-md">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl text-gray-700 dark:text-gray-300 flex items-center gap-2">
-          <LightbulbIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+    <Card className="border-blue-200 bg-white/80 dark:border-slate-600 dark:bg-slate-800/80 shadow-lg backdrop-blur-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl text-slate-800 dark:text-slate-200 flex items-center gap-2">
+          <LightbulbIcon className="h-5 w-5 text-blue-500" />
           Submission Tips
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3 pt-0">
-        <div className="text-sm text-gray-700 dark:text-gray-300 rounded-md p-2 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors">
-          <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">📌 Clear Description</p>
-          <p>Provide a concise but informative description of your sequence.</p>
+      <CardContent className="space-y-4 pt-0">
+        <div className="text-sm text-slate-700 dark:text-slate-300 rounded-lg p-4 hover:bg-blue-50 dark:hover:bg-slate-700/50 transition-colors border border-blue-100 dark:border-slate-600">
+          <p className="font-semibold text-blue-700 dark:text-blue-400 mb-2 flex items-center">
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+            Clear Description
+          </p>
+          <p>Provide a concise but informative description of your sequence and its mathematical significance.</p>
         </div>
-        <div className="text-sm text-gray-700 dark:text-gray-300 rounded-md p-2 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors">
-          <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">📌 Accurate Formula</p>
-          <p>Use standard mathematical notation or specify recurrence relations clearly.</p>
+        <div className="text-sm text-slate-700 dark:text-slate-300 rounded-lg p-4 hover:bg-cyan-50 dark:hover:bg-slate-700/50 transition-colors border border-cyan-100 dark:border-slate-600">
+          <p className="font-semibold text-cyan-700 dark:text-cyan-400 mb-2 flex items-center">
+            <span className="w-2 h-2 bg-cyan-500 rounded-full mr-2"></span>
+            Accurate Formula
+          </p>
+          <p>Use standard mathematical notation or specify recurrence relations clearly and precisely.</p>
         </div>
-        <div className="text-sm text-gray-700 dark:text-gray-300 rounded-md p-2 hover:bg-gray-200/50 dark:hover:bg-gray-800/50 transition-colors">
-          <p className="font-medium text-gray-800 dark:text-gray-200 mb-1">📌 Include Context</p>
-          <p>Mention where the sequence appears in mathematics or real-world applications.</p>
+        <div className="text-sm text-slate-700 dark:text-slate-300 rounded-lg p-4 hover:bg-indigo-50 dark:hover:bg-slate-700/50 transition-colors border border-indigo-100 dark:border-slate-600">
+          <p className="font-semibold text-indigo-700 dark:text-indigo-400 mb-2 flex items-center">
+            <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+            Include Context
+          </p>
+          <p>Mention where the sequence appears in mathematics or real-world applications to help others understand its importance.</p>
         </div>
       </CardContent>
     </Card>

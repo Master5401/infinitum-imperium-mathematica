@@ -67,12 +67,12 @@ const SpecialNumbersBrowse = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/20 via-gray-900 to-gray-950 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-100 dark:from-slate-900 dark:via-slate-800 dark:to-blue-900 py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center mb-10">
           <Button
             variant="ghost"
-            className="text-amber-300 hover:text-amber-200"
+            className="text-slate-600 hover:text-slate-800 hover:bg-white/50 dark:text-slate-300 dark:hover:text-slate-100"
             onClick={() => navigate("/special-numbers")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -81,7 +81,7 @@ const SpecialNumbersBrowse = () => {
           
           <Button
             variant="outline"
-            className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+            className="text-teal-600 border-teal-200 hover:bg-teal-50 dark:text-teal-400 dark:border-teal-600 dark:hover:bg-teal-900/20"
             onClick={() => navigate("/special-numbers")}
           >
             <Calculator className="h-4 w-4 mr-2" />
@@ -89,23 +89,25 @@ const SpecialNumbersBrowse = () => {
           </Button>
         </div>
 
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-amber-300 mb-2">Special Numbers Dictionary</h1>
-          <p className="text-amber-200/80">
-            Explore our collection of numbers with fascinating mathematical properties
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-200 mb-4">
+            Special Numbers Dictionary
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            Explore our curated collection of numbers with fascinating mathematical properties
           </p>
         </div>
 
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-3 mb-8 max-w-2xl mx-auto">
           <Input
             placeholder="Search by number, name or description..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-gray-800/50 border-amber-700/30 text-amber-100 placeholder:text-amber-100/50"
+            className="bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 h-12"
           />
           <Button
             variant="outline"
-            className="text-amber-300 border-amber-700/30 hover:bg-amber-900/20 hover:text-amber-200"
+            className="text-teal-600 border-teal-200 hover:bg-teal-50 dark:text-teal-400 dark:border-teal-600 dark:hover:bg-teal-900/20 px-6"
           >
             <Search className="h-4 w-4 mr-2" />
             Search
@@ -113,17 +115,17 @@ const SpecialNumbersBrowse = () => {
         </div>
 
         {loading ? (
-          <div className="text-center py-10">
-            <div className="animate-spin h-8 w-8 border-2 border-amber-500 border-t-transparent rounded-full mx-auto"></div>
-            <p className="mt-4 text-amber-300">Loading special numbers...</p>
+          <div className="text-center py-16">
+            <div className="animate-spin h-10 w-10 border-4 border-teal-500 border-t-transparent rounded-full mx-auto"></div>
+            <p className="mt-6 text-slate-600 dark:text-slate-400 text-lg">Loading special numbers...</p>
           </div>
         ) : filteredNumbers.length === 0 ? (
-          <div className="text-center py-10 bg-gray-900/50 rounded-lg border border-amber-700/20">
-            <BookOpen className="h-12 w-12 text-amber-500/30 mx-auto" />
-            <p className="mt-4 text-amber-300">No special numbers found</p>
-            <p className="text-amber-200/70">Try a different search or be the first to add one!</p>
+          <div className="text-center py-16 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-teal-200 dark:border-slate-600 backdrop-blur-sm">
+            <BookOpen className="h-16 w-16 text-teal-400 mx-auto mb-6" />
+            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">No special numbers found</h3>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">Try a different search or be the first to add one!</p>
             <Button
-              className="mt-4 bg-amber-600 hover:bg-amber-700 text-white"
+              className="bg-teal-600 hover:bg-teal-700 text-white"
               onClick={() => navigate("/special-numbers")}
             >
               <Calculator className="h-4 w-4 mr-2" />
@@ -131,31 +133,31 @@ const SpecialNumbersBrowse = () => {
             </Button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredNumbers.map((num) => (
-              <Card key={num.id} className="border-amber-600/20 bg-gradient-to-b from-gray-900/90 to-gray-950 shadow-lg shadow-amber-900/10">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
+              <Card key={num.id} className="border-teal-200 bg-white/80 dark:border-slate-600 dark:bg-slate-800/80 shadow-lg backdrop-blur-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <CardHeader className="pb-3">
+                  <div className="flex justify-between items-start mb-2">
                     <div>
-                      <CardTitle className="text-2xl text-amber-300">{num.number}</CardTitle>
-                      <CardDescription className="text-amber-200">
+                      <CardTitle className="text-2xl text-teal-700 dark:text-teal-400 font-bold">{num.number}</CardTitle>
+                      <CardDescription className="text-slate-600 dark:text-slate-400 font-medium text-base">
                         {num.name}
                       </CardDescription>
                     </div>
-                    <div className="px-2 py-1 bg-amber-900/30 rounded text-xs text-amber-200 whitespace-nowrap">
+                    <div className="px-3 py-1 bg-teal-100 dark:bg-teal-900/30 rounded-full text-xs text-teal-700 dark:text-teal-300 whitespace-nowrap">
                       {new Date(num.created_at).toLocaleDateString()}
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-amber-200/80 mb-2">{num.description}</p>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">{num.description}</p>
                   {num.formula && (
-                    <div className="p-2 bg-gray-800/50 rounded font-mono text-xs text-amber-300/70 overflow-x-auto">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-700 rounded-md font-mono text-xs text-slate-700 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-600">
                       {num.formula}
                     </div>
                   )}
-                  <div className="mt-2 text-xs text-amber-400">
-                    Added by: {num.author === "guest" ? "Guest" : num.author.substring(0, 8)}
+                  <div className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+                    Added by: <span className="font-medium">{num.author === "guest" ? "Guest" : num.author.substring(0, 8)}</span>
                   </div>
                 </CardContent>
               </Card>
