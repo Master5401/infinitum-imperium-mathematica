@@ -104,16 +104,18 @@ const DailyChallenge = () => {
           setIsUsingFallback(false);
         } else {
           console.log("No existing challenge found, attempting to generate new one...");
-          // Try to generate a new one, but with timeout
+          // Try to generate a new one with a simple timeout approach
           try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-            
-            const { data: generatedData, error: generateError } = await supabase.functions.invoke('generate-daily-challenge', {
-              signal: controller.signal
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Timeout')), 5000);
             });
             
-            clearTimeout(timeoutId);
+            const generatePromise = supabase.functions.invoke('generate-daily-challenge');
+            
+            const { data: generatedData, error: generateError } = await Promise.race([
+              generatePromise,
+              timeoutPromise
+            ]) as any;
             
             if (generateError) {
               console.error("Edge function error:", generateError);
