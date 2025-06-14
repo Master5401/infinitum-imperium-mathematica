@@ -8,6 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Brain, ArrowLeft, Save, Check, BookOpen, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type SpecialNumberInsert = Database['public']['Tables']['special_numbers']['Insert'];
 
 const SpecialNumbers = () => {
   const navigate = useNavigate();
@@ -64,15 +67,17 @@ const SpecialNumbers = () => {
       const { data: session } = await supabase.auth.getSession();
       const userId = session?.session?.user?.id;
 
+      const specialNumberData: SpecialNumberInsert = {
+        number: number,
+        name: name,
+        description: description,
+        formula: formula || convertedFormula,
+        author: userId || "guest",
+      };
+
       const { error } = await supabase
         .from("special_numbers")
-        .insert({
-          number: number,
-          name: name,
-          description: description,
-          formula: formula || convertedFormula,
-          author: userId || "guest",
-        });
+        .insert(specialNumberData);
 
       if (error) throw error;
 

@@ -8,6 +8,9 @@ import SolutionDisplay from "@/components/daily-challenge/SolutionDisplay";
 import ActionButtons from "@/components/daily-challenge/ActionButtons";
 import SequenceVisualizer from "@/components/daily-challenge/SequenceVisualizer";
 import SequenceAnalysis from "@/components/daily-challenge/SequenceAnalysis";
+import type { Database } from "@/integrations/supabase/types";
+
+type DailyChallengeRow = Database['public']['Tables']['daily_challenges']['Row'];
 
 const DailyChallenge = () => {
   const [challenge, setChallenge] = useState<Challenge | null>(null);
@@ -35,7 +38,7 @@ const DailyChallenge = () => {
         
         // If we have a challenge for today, use it
         if (data && data.length > 0) {
-          const dbChallenge = data[0];
+          const dbChallenge: DailyChallengeRow = data[0];
           setChallenge({
             id: dbChallenge.id,
             sequence: dbChallenge.sequence,
@@ -52,15 +55,17 @@ const DailyChallenge = () => {
           
           if (generatedData && generatedData.challenge) {
             // Store the generated challenge in the database
+            const challengeInsert: Database['public']['Tables']['daily_challenges']['Insert'] = {
+              sequence: generatedData.challenge.sequence,
+              hints: generatedData.challenge.hints,
+              difficulty: generatedData.challenge.difficulty,
+              solution: generatedData.challenge.solution,
+              date: today
+            };
+            
             const { error: insertError } = await supabase
               .from('daily_challenges')
-              .insert({
-                sequence: generatedData.challenge.sequence,
-                hints: generatedData.challenge.hints,
-                difficulty: generatedData.challenge.difficulty,
-                solution: generatedData.challenge.solution,
-                date: today
-              });
+              .insert(challengeInsert);
               
             if (insertError) throw insertError;
             

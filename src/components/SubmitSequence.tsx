@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +8,9 @@ import 'katex/dist/katex.min.css';
 import katex from 'katex';
 import { supabase } from "@/integrations/supabase/client";
 import { SequenceGraph } from "./SequenceGraph";
+import type { Database } from "@/integrations/supabase/types";
+
+type SequenceInsert = Database['public']['Tables']['sequences']['Insert'];
 
 export const SubmitSequence = () => {
   const [title, setTitle] = useState("");
@@ -109,23 +111,24 @@ export const SubmitSequence = () => {
     try {
       // Generate final LaTeX if needed
       if (!latexFormula && formula) {
-        const convertedLatex = await convertToLatex();
+        await convertToLatex();
       }
 
       // Analyze the sequence
       const analysis = await analyzeSequence(formula);
       setAiAnalysis(analysis);
 
-      // Save to database
-      const { error } = await supabase.from('sequences').insert({
+      // Prepare the data for insertion
+      const sequenceData: SequenceInsert = {
         title,
         description,
         formula,
         latex_formula: latexFormula,
-        author: author || 'Anonymous',
-        votes: 0,
-        comments: 0
-      });
+        author: author || 'Anonymous'
+      };
+
+      // Save to database
+      const { error } = await supabase.from('sequences').insert(sequenceData);
 
       if (error) throw error;
 

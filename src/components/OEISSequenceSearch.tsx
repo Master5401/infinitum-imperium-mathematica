@@ -8,16 +8,9 @@ import { toast } from "sonner";
 import { Search, Share2, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SequenceCard } from "@/components/SequenceCard";
+import type { Database } from "@/integrations/supabase/types";
 
-interface OEISSequence {
-  id: string;
-  oeis_id: string;
-  name: string;
-  description: string;
-  values: string;
-  formula?: string;
-  source?: string;
-}
+type OEISSequence = Database['public']['Tables']['oeis_sequences']['Row'];
 
 const OEISSequenceSearch = () => {
   const [searchTerm, setSearchTerm] = useState("");

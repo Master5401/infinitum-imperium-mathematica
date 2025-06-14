@@ -7,6 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Calculator, Save, Sigma } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type SequenceLibraryInsert = Database['public']['Tables']['sequences_library']['Insert'];
 
 interface SequenceFormProps {
   onSubmitSuccess: () => void;
@@ -68,19 +71,21 @@ export const SequenceForm = ({ onSubmitSuccess }: SequenceFormProps) => {
       const userId = session?.session?.user?.id;
       const authorName = userId ? (session?.session?.user?.email?.split('@')[0] || 'User') : 'Guest';
 
+      const sequenceData: SequenceLibraryInsert = {
+        title,
+        description,
+        formula,
+        latex_formula: latexFormula || formula,
+        example_values: exampleValues,
+        complexity,
+        author: userId || null,
+        author_name: authorName,
+        tags: [],
+      };
+
       const { error } = await supabase
         .from("sequences_library")
-        .insert({
-          title,
-          description,
-          formula,
-          latex_formula: latexFormula || formula,
-          example_values: exampleValues,
-          complexity,
-          author: userId || null,
-          author_name: authorName,
-          tags: [],
-        });
+        .insert(sequenceData);
 
       if (error) throw error;
 
@@ -198,7 +203,7 @@ export const SequenceForm = ({ onSubmitSuccess }: SequenceFormProps) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>Submitting...</>
+            <>Submitting...</> 
           ) : (
             <>
               <Save className="h-4 w-4 mr-2" />

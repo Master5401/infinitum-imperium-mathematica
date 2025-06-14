@@ -7,16 +7,9 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Calculator, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 
-interface SpecialNumber {
-  id: string;
-  number: string;
-  name: string;
-  description: string;
-  formula: string | null;
-  author: string;
-  created_at: string;
-}
+type SpecialNumber = Database['public']['Tables']['special_numbers']['Row'];
 
 const SpecialNumbersBrowse = () => {
   const navigate = useNavigate();

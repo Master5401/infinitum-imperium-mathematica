@@ -9,7 +9,207 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      daily_challenges: {
+        Row: {
+          created_at: string | null
+          date: string
+          difficulty: number
+          hints: string[]
+          id: string
+          sequence: string
+          solution: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          difficulty: number
+          hints: string[]
+          id?: string
+          sequence: string
+          solution: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          difficulty?: number
+          hints?: string[]
+          id?: string
+          sequence?: string
+          solution?: string
+        }
+        Relationships: []
+      }
+      oeis_sequences: {
+        Row: {
+          created_at: string | null
+          description: string
+          formula: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          oeis_id: string
+          source: string | null
+          values: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          formula?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          oeis_id: string
+          source?: string | null
+          values: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          formula?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          oeis_id?: string
+          source?: string | null
+          values?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      sequences: {
+        Row: {
+          author: string
+          comments: number | null
+          created_at: string | null
+          description: string
+          formula: string
+          id: string
+          latex_formula: string
+          title: string
+          votes: number | null
+        }
+        Insert: {
+          author: string
+          comments?: number | null
+          created_at?: string | null
+          description: string
+          formula: string
+          id?: string
+          latex_formula: string
+          title: string
+          votes?: number | null
+        }
+        Update: {
+          author?: string
+          comments?: number | null
+          created_at?: string | null
+          description?: string
+          formula?: string
+          id?: string
+          latex_formula?: string
+          title?: string
+          votes?: number | null
+        }
+        Relationships: []
+      }
+      sequences_library: {
+        Row: {
+          author: string | null
+          author_name: string
+          complexity: number
+          created_at: string
+          description: string
+          example_values: string | null
+          formula: string
+          id: string
+          latex_formula: string
+          tags: string[] | null
+          title: string
+          votes: number | null
+        }
+        Insert: {
+          author?: string | null
+          author_name: string
+          complexity?: number
+          created_at?: string
+          description: string
+          example_values?: string | null
+          formula: string
+          id?: string
+          latex_formula: string
+          tags?: string[] | null
+          title: string
+          votes?: number | null
+        }
+        Update: {
+          author?: string | null
+          author_name?: string
+          complexity?: number
+          created_at?: string
+          description?: string
+          example_values?: string | null
+          formula?: string
+          id?: string
+          latex_formula?: string
+          tags?: string[] | null
+          title?: string
+          votes?: number | null
+        }
+        Relationships: []
+      }
+      special_numbers: {
+        Row: {
+          author: string
+          created_at: string
+          description: string
+          formula: string | null
+          id: string
+          name: string
+          number: string
+        }
+        Insert: {
+          author: string
+          created_at?: string
+          description: string
+          formula?: string | null
+          id?: string
+          name: string
+          number: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          description?: string
+          formula?: string | null
+          id?: string
+          name?: string
+          number?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
