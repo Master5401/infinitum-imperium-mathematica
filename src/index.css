@@ -34,8 +34,8 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 400;
   overflow-x: hidden;
-  background: linear-gradient(135deg, #0a0a0f 0%, #1a1425 50%, #0f0a0f 100%);
-  color: #f8fafc;
+  background: linear-gradient(135deg, #0A0A0F 0%, #1A1B23 50%, #0A0A0F 100%);
+  color: #FFFFFF;
   letter-spacing: -0.01em;
 }
 
@@ -58,7 +58,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
-/* Fluid, minimalistic animations */
+/* High-contrast animations */
 @keyframes gentle-fade-in {
   0% {
     opacity: 0;
@@ -70,14 +70,21 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@keyframes gentle-scale-in {
-  0% {
-    transform: scale(0.96);
-    opacity: 0;
+@keyframes electric-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
   }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+  50% {
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+  }
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px currentColor;
+  }
+  50% {
+    text-shadow: 0 0 20px currentColor, 0 0 30px currentColor;
   }
 }
 
@@ -90,79 +97,50 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-@keyframes gentle-pulse {
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.02);
-  }
-}
-
-@keyframes subtle-breathe {
-  0%, 100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-@keyframes fluid-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(139, 92, 246, 0.2);
-  }
-}
-
-/* Futuristic glass morphism */
+/* High-contrast glass morphism */
 .glass-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0, 212, 255, 0.2);
   border-radius: 16px;
   box-shadow: 
-    0 8px 32px 0 rgba(31, 38, 135, 0.15),
+    0 8px 32px 0 rgba(0, 212, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .neo-border {
-  border: 1px solid;
-  border-image: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2)) 1;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #00D4FF, #8B5CF6, #39FF14) 1;
   border-radius: 12px;
 }
 
-/* Minimalistic hover effects */
+/* Enhanced hover effects */
 .hover-lift {
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(0, 212, 255, 0.3);
 }
 
-/* Fluid text gradients */
+/* High-contrast text gradients */
 .text-gradient-primary {
-  background: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #00D4FF, #8B5CF6, #39FF14);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(135deg, #FF6B35, #FF1493, #BF00FF);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradient-shift 6s ease-in-out infinite;
-}
-
-.text-gradient-accent {
-  background: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradient-shift 8s ease-in-out infinite;
 }
 
 @keyframes gradient-shift {
@@ -174,40 +152,40 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Futuristic background patterns */
+/* Enhanced background patterns */
 .neural-network {
   background-image: 
-    radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-    linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.02) 50%, transparent 100%);
+    radial-gradient(circle at 25% 25%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 50%);
 }
 
 .grid-pattern {
   background-image: 
-    linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
-/* Smooth scrollbar */
+/* High-contrast scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(10, 10, 15, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(59, 130, 246, 0.3));
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.6), rgba(139, 92, 246, 0.6));
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(59, 130, 246, 0.5));
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.8), rgba(139, 92, 246, 0.8));
 }
 
-/* Input and button refinements */
+/* Enhanced input and button styles */
 input, button, textarea {
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   font-family: 'Inter', sans-serif;
@@ -215,11 +193,11 @@ input, button, textarea {
 
 input:focus, textarea:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.4);
+  border-color: rgba(0, 212, 255, 0.8);
 }
 
-/* Remove old animation definitions and keep minimal essential ones */
+/* Essential animations */
 @keyframes fade-in {
   0% {
     opacity: 0;

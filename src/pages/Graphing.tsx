@@ -110,18 +110,18 @@ const Graphing = () => {
     <div className="min-h-screen neural-network grid-pattern p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="text-center space-y-6">
-          <h1 className="text-5xl font-futuristic font-bold text-gradient-primary">
+          <h1 className="text-5xl font-futuristic font-bold text-gradient-primary animate-neon-pulse">
             Advanced Sequence Visualizer
           </h1>
-          <p className="font-space text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="font-space text-neutral-white text-lg max-w-2xl mx-auto leading-relaxed font-light">
             Explore mathematical sequences through multiple visualization types including polar graphs, radar charts, and more.
           </p>
         </div>
         
-        <Card className="glass-card hover-lift p-8 border border-white/10">
+        <Card className="glass-card hover-lift p-8 border-2 border-electric-blue/30">
           <div className="space-y-8">
             <div>
-              <h2 className="text-xl font-futuristic font-semibold text-white mb-6">Sequence Selection</h2>
+              <h2 className="text-xl font-futuristic font-semibold text-neutral-white mb-6">Sequence Selection</h2>
               <div className="flex flex-wrap gap-3">
                 {[
                   { key: "fibonacci", label: "Fibonacci" },
@@ -137,8 +137,8 @@ const Graphing = () => {
                     onClick={() => setSequenceType(seq.key as typeof sequenceType)}
                     className={`font-space transition-all duration-300 ${
                       sequenceType === seq.key 
-                        ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white border-none" 
-                        : "glass-card text-slate-300 border-white/20 hover:border-purple-400/50 hover:text-white"
+                        ? "bg-gradient-to-r from-electric-blue to-electric-purple text-neutral-white border-none animate-electric-glow" 
+                        : "glass-card text-neutral-light border-2 border-electric-blue/30 hover:border-electric-blue/60 hover:text-neutral-white"
                     }`}
                   >
                     {seq.label}
@@ -148,47 +148,47 @@ const Graphing = () => {
             </div>
             
             <div className="flex items-center gap-6">
-              <label className="font-space text-white font-medium whitespace-nowrap">
+              <label className="font-space text-neutral-white font-medium whitespace-nowrap">
                 Number of Terms:
               </label>
               <Input
                 type="number"
                 value={terms}
                 onChange={(e) => setTerms(Math.min(20, Math.max(1, parseInt(e.target.value) || 1)))}
-                className="w-32 glass-card border-white/20 text-white font-mono focus:border-purple-400/50 placeholder:text-slate-500"
+                className="w-32 glass-card border-2 border-electric-blue/30 text-neutral-white font-mono focus:border-electric-blue/60 placeholder:text-neutral-gray bg-dark-surface/50"
                 min="1"
                 max="20"
               />
-              <span className="font-space text-slate-400 text-sm">
+              <span className="font-space text-neutral-light text-sm">
                 (Max: 20 for optimal visualization)
               </span>
             </div>
           </div>
         </Card>
 
-        <Card className="glass-card hover-lift p-8 border border-white/10">
+        <Card className="glass-card hover-lift p-8 border-2 border-neon-green/30">
           <div className="space-y-6">
-            <h2 className="text-xl font-futuristic font-semibold text-white">
+            <h2 className="text-xl font-futuristic font-semibold text-neutral-white">
               Interactive Visualizations
             </h2>
-            <p className="font-space text-slate-300 text-sm leading-relaxed font-light">
+            <p className="font-space text-neutral-light text-sm leading-relaxed font-light">
               Choose from multiple chart types to visualize your sequence data. Each visualization offers unique insights into the mathematical patterns.
             </p>
             <SequenceGraph data={sequenceValues} />
           </div>
         </Card>
 
-        <Card className="glass-card p-6 border border-white/10">
+        <Card className="glass-card p-6 border-2 border-neon-pink/30">
           <div className="space-y-4">
-            <h3 className="text-lg font-futuristic font-semibold text-white">Current Sequence Values</h3>
+            <h3 className="text-lg font-futuristic font-semibold text-neutral-white">Current Sequence Values</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {data.map((point, index) => (
                 <div 
                   key={index}
-                  className="glass-card border border-purple-500/20 p-3 text-center hover-lift transition-all duration-300"
+                  className="glass-card border-2 border-electric-purple/30 p-3 text-center hover-lift transition-all duration-300 hover:border-electric-purple/60"
                 >
-                  <div className="text-purple-400 text-xs font-mono font-medium">T{point.n + 1}</div>
-                  <div className="text-white font-space font-semibold">{point.value}</div>
+                  <div className="text-electric-cyan text-xs font-mono font-medium">T{point.n + 1}</div>
+                  <div className="text-neutral-white font-space font-semibold">{point.value}</div>
                 </div>
               ))}
             </div>
