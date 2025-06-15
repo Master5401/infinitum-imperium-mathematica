@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { PageTransition } from "./components/PageTransition";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
@@ -33,27 +34,75 @@ function App() {
             <NavBar />
             <main>
               <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
+                <Route path="/" element={
+                  <PageTransition>
+                    <Index />
+                  </PageTransition>
+                } />
+                <Route path="/auth" element={
+                  <PageTransition>
+                    <Auth />
+                  </PageTransition>
+                } />
                 <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
+                  <PageTransition>
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  </PageTransition>
                 } />
-                <Route path="/daily-challenge" element={<DailyChallenge />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/sequences" element={<SequenceSubmit />} />
-                <Route path="/special-numbers" element={<SpecialNumbers />} />
-                <Route path="/special-numbers/browse" element={<SpecialNumbersBrowse />} />
-                <Route path="/learn" element={<Learn />} />
-                <Route path="/graphing" element={<Graphing />} />
+                <Route path="/daily-challenge" element={
+                  <PageTransition>
+                    <DailyChallenge />
+                  </PageTransition>
+                } />
+                <Route path="/library" element={
+                  <PageTransition>
+                    <Library />
+                  </PageTransition>
+                } />
+                <Route path="/sequences" element={
+                  <PageTransition>
+                    <SequenceSubmit />
+                  </PageTransition>
+                } />
+                <Route path="/special-numbers" element={
+                  <PageTransition>
+                    <SpecialNumbers />
+                  </PageTransition>
+                } />
+                <Route path="/special-numbers/browse" element={
+                  <PageTransition>
+                    <SpecialNumbersBrowse />
+                  </PageTransition>
+                } />
+                <Route path="/learn" element={
+                  <PageTransition>
+                    <Learn />
+                  </PageTransition>
+                } />
+                <Route path="/graphing" element={
+                  <PageTransition>
+                    <Graphing />
+                  </PageTransition>
+                } />
                 <Route path="/gamification" element={
-                  <ProtectedRoute>
-                    <Gamification />
-                  </ProtectedRoute>
+                  <PageTransition>
+                    <ProtectedRoute>
+                      <Gamification />
+                    </ProtectedRoute>
+                  </PageTransition>
                 } />
-                <Route path="/security" element={<Security />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/security" element={
+                  <PageTransition>
+                    <Security />
+                  </PageTransition>
+                } />
+                <Route path="*" element={
+                  <PageTransition>
+                    <NotFound />
+                  </PageTransition>
+                } />
               </Routes>
             </main>
           </div>
