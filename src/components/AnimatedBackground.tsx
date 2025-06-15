@@ -20,16 +20,16 @@ export const AnimatedBackground = () => {
   useEffect(() => {
     const generateSymbols = () => {
       const newSymbols: FloatingSymbol[] = [];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 12; i++) {
         newSymbols.push({
           id: i,
           symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
           x: Math.random() * 100,
           y: Math.random() * 100,
-          size: Math.random() * 40 + 20,
-          opacity: Math.random() * 0.1 + 0.02,
-          duration: Math.random() * 20 + 15,
-          delay: Math.random() * 5,
+          size: Math.random() * 24 + 16,
+          opacity: Math.random() * 0.06 + 0.02,
+          duration: Math.random() * 40 + 30,
+          delay: Math.random() * 10,
         });
       }
       setSymbols(newSymbols);
@@ -40,16 +40,21 @@ export const AnimatedBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Gradient background */}
+      {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-black" />
       
-      {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-red-900/10 via-transparent to-amber-900/10 animate-pulse" />
+      {/* Very gentle animated gradient overlay */}
+      <div 
+        className="absolute inset-0 bg-gradient-to-r from-red-900/5 via-transparent to-amber-900/5"
+        style={{
+          animation: 'subtle-breathe 8s ease-in-out infinite'
+        }}
+      />
       
-      {/* Grid pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,60,54,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,60,54,0.03)_1px,transparent_1px)] bg-[size:100px_100px]" />
+      {/* Refined grid pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,60,54,0.015)_1px,transparent_1px),linear-gradient(90deg,rgba(255,60,54,0.015)_1px,transparent_1px)] bg-[size:120px_120px]" />
       
-      {/* Floating mathematical symbols */}
+      {/* Floating mathematical symbols with smoother animation */}
       {symbols.map((symbol) => (
         <div
           key={symbol.id}
@@ -59,7 +64,7 @@ export const AnimatedBackground = () => {
             top: `${symbol.y}%`,
             fontSize: `${symbol.size}px`,
             opacity: symbol.opacity,
-            animation: `float ${symbol.duration}s ease-in-out infinite`,
+            animation: `gentle-float ${symbol.duration}s ease-in-out infinite`,
             animationDelay: `${symbol.delay}s`,
           }}
         >
@@ -67,17 +72,17 @@ export const AnimatedBackground = () => {
         </div>
       ))}
       
-      {/* Particles effect */}
+      {/* Subtle particle effect */}
       <div className="absolute inset-0">
-        {[...Array(8)].map((_, i) => (
+        {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className="absolute w-1 h-1 bg-red-400/30 rounded-full animate-pulse"
+            className="absolute w-0.5 h-0.5 bg-red-400/20 rounded-full"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${Math.random() * 4 + 2}s`,
+              animation: `gentle-pulse ${Math.random() * 6 + 4}s ease-in-out infinite`,
+              animationDelay: `${Math.random() * 5}s`,
             }}
           />
         ))}
