@@ -69,36 +69,75 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// New high-contrast color scheme
-				electric: {
-					blue: '#00D4FF',
-					purple: '#8B5CF6',
-					cyan: '#06B6D4',
-					teal: '#14B8A6',
-					emerald: '#10B981',
+				// Warm and comfortable color scheme
+				sage: {
+					50: '#f6f8f6',
+					100: '#e3e8e3',
+					200: '#c7d2c7',
+					300: '#9fb09f',
+					400: '#718871',
+					500: '#5a6f5a',
+					600: '#475947',
+					700: '#3a483a',
+					800: '#2f3c2f',
+					900: '#283228',
 				},
-				neon: {
-					green: '#39FF14',
-					pink: '#FF1493',
-					orange: '#FF6B35',
-					yellow: '#FFFF00',
-					purple: '#BF00FF',
+				azure: {
+					50: '#f0f9ff',
+					100: '#e0f2fe',
+					200: '#bae6fd',
+					300: '#7dd3fc',
+					400: '#38bdf8',
+					500: '#0ea5e9',
+					600: '#0284c7',
+					700: '#0369a1',
+					800: '#075985',
+					900: '#0c4a6e',
 				},
+				lavender: {
+					50: '#faf7ff',
+					100: '#f4edff',
+					200: '#ebe0ff',
+					300: '#d9c7ff',
+					400: '#c2a1ff',
+					500: '#a67cff',
+					600: '#9333ea',
+					700: '#7c2d7c',
+					800: '#6b246b',
+					900: '#581c58',
+				},
+				amber: {
+					50: '#fffbeb',
+					100: '#fef3c7',
+					200: '#fde68a',
+					300: '#fcd34d',
+					400: '#fbbf24',
+					500: '#f59e0b',
+					600: '#d97706',
+					700: '#b45309',
+					800: '#92400e',
+					900: '#78350f',
+				},
+				// Dark theme colors - warmer and softer
 				dark: {
-					bg: '#0A0A0F',
-					surface: '#1A1B23',
-					elevated: '#2A2D3A',
+					bg: '#0f0f14',
+					surface: '#1a1a22',
+					elevated: '#252530',
+					accent: '#2d2d3a',
 				},
+				// Neutral colors with better contrast
 				neutral: {
-					white: '#FFFFFF',
-					light: '#F8FAFC',
-					gray: '#8E9196',
-					dark: '#1E293B',
+					white: '#ffffff',
+					light: '#f8fafc',
+					medium: '#94a3b8',
+					gray: '#64748b',
+					dark: '#334155',
 				},
+				// Glass effects with warmer tones
 				glass: {
-					light: 'rgba(255, 255, 255, 0.05)',
-					medium: 'rgba(255, 255, 255, 0.10)',
-					dark: 'rgba(0, 0, 0, 0.20)',
+					light: 'rgba(255, 255, 255, 0.08)',
+					medium: 'rgba(255, 255, 255, 0.12)',
+					dark: 'rgba(0, 0, 0, 0.25)',
 				}
 			},
 			backdropBlur: {
@@ -137,20 +176,65 @@ export default {
 						transform: 'translateY(0) scale(1)'
 					}
 				},
-				'electric-glow': {
+				'soft-glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(0, 212, 255, 0.3)'
+						boxShadow: '0 0 20px rgba(166, 124, 255, 0.2)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(0, 212, 255, 0.6)'
+						boxShadow: '0 0 30px rgba(166, 124, 255, 0.4)'
 					}
 				},
-				'neon-pulse': {
+				'warm-pulse': {
 					'0%, 100%': {
-						textShadow: '0 0 10px currentColor'
+						textShadow: '0 0 10px rgba(245, 158, 11, 0.5)'
 					},
 					'50%': {
-						textShadow: '0 0 20px currentColor, 0 0 30px currentColor'
+						textShadow: '0 0 20px rgba(245, 158, 11, 0.8)'
+					}
+				},
+				'gentle-float': {
+					'0%, 100%': {
+						transform: 'translateY(0) rotate(0deg)'
+					},
+					'50%': {
+						transform: 'translateY(-6px) rotate(1deg)'
+					}
+				},
+				'symbol-drift': {
+					'0%': {
+						transform: 'translateX(0px) translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateX(10px) translateY(-5px)'
+					},
+					'100%': {
+						transform: 'translateX(0px) translateY(0px)'
+					}
+				},
+				'wave-motion': {
+					'0%, 100%': {
+						transform: 'translateX(-50%) skewX(-2deg)'
+					},
+					'50%': {
+						transform: 'translateX(50%) skewX(2deg)'
+					}
+				},
+				'grid-breathe': {
+					'0%, 100%': {
+						opacity: '0.3'
+					},
+					'50%': {
+						opacity: '0.5'
+					}
+				},
+				'particle-dance': {
+					'0%, 100%': {
+						opacity: '0.4',
+						transform: 'scale(0.9)'
+					},
+					'50%': {
+						opacity: '0.8',
+						transform: 'scale(1.1)'
 					}
 				}
 			},
@@ -158,8 +242,13 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'gentle-fade-in': 'gentle-fade-in 1.2s ease-out',
-				'electric-glow': 'electric-glow 3s ease-in-out infinite',
-				'neon-pulse': 'neon-pulse 2s ease-in-out infinite',
+				'soft-glow': 'soft-glow 4s ease-in-out infinite',
+				'warm-pulse': 'warm-pulse 3s ease-in-out infinite',
+				'gentle-float': 'gentle-float 8s ease-in-out infinite',
+				'symbol-drift': 'symbol-drift 12s ease-in-out infinite',
+				'wave-motion': 'wave-motion 20s ease-in-out infinite',
+				'grid-breathe': 'grid-breathe 6s ease-in-out infinite',
+				'particle-dance': 'particle-dance 3s ease-in-out infinite',
 			}
 		}
 	},
