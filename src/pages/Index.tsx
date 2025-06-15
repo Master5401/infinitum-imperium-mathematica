@@ -42,7 +42,7 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden neural-network">
       {/* Animated Background */}
       <AnimatedBackground />
       
@@ -50,79 +50,85 @@ const Index = () => {
       <MathEasterEgg />
       <SecretsEasterEgg />
       
+      {/* Grid Pattern Overlay */}
+      <div className="absolute inset-0 grid-pattern opacity-30" />
+      
       {/* Main Content */}
       <div className="relative z-10 container min-h-screen flex items-center justify-center py-12">
-        <div className="w-full max-w-4xl space-y-8">
-          {/* Hero Section with refined animations */}
-          <div className="text-center space-y-6" style={{ animation: 'gentle-fade-in 1.2s ease-out' }}>
-            <h1 className="text-6xl md:text-8xl font-bold font-cinzel bg-gradient-to-r from-red-400 via-amber-400 to-red-400 bg-clip-text text-transparent leading-tight">
+        <div className="w-full max-w-5xl space-y-12">
+          {/* Hero Section with futuristic typography */}
+          <div className="text-center space-y-8" style={{ animation: 'gentle-fade-in 1.2s ease-out' }}>
+            <h1 className="text-6xl md:text-8xl font-futuristic font-bold text-gradient-primary leading-tight tracking-tight">
               Math Torcher
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed transition-all duration-700 hover:text-gray-200">
-              Where mathematics meets <span className="text-amber-400 font-semibold">infinite possibilities</span>
+            <p className="text-xl md:text-2xl font-space text-slate-300 max-w-3xl mx-auto leading-relaxed font-light">
+              Where mathematics meets <span className="text-gradient-accent font-medium">infinite possibilities</span>
             </p>
             
-            {/* Refined mathematical formula */}
-            <div className="text-lg text-red-300 font-mono" style={{ animation: 'gentle-pulse 4s ease-in-out infinite' }}>
-              ∫₋∞^∞ f(knowledge) dx = ∞
+            {/* Refined mathematical formula with futuristic styling */}
+            <div className="inline-block glass-card px-6 py-3 hover-lift">
+              <div className="text-lg font-mono text-purple-300 animate-fluid-glow">
+                ∫₋∞^∞ f(knowledge) dx = ∞
+              </div>
             </div>
           </div>
 
-          {/* Interactive Main Card */}
-          <div style={{ animation: 'gentle-scale-in 1s ease-out 0.3s both' }}>
-            <InteractiveCard
-              {...cardData}
-              onGetStarted={() => navigate('/auth')}
-            />
+          {/* Interactive Main Card with glass morphism */}
+          <div style={{ animation: 'gentle-fade-in 1s ease-out 0.3s both' }}>
+            <div className="glass-card hover-lift p-8">
+              <InteractiveCard
+                {...cardData}
+                onGetStarted={() => navigate('/auth')}
+              />
+            </div>
           </div>
 
-          {/* Quick Access Features with staggered animation */}
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Quick Access Features with modern cards */}
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: "Sequences", path: "/sequences", icon: "∑", description: "Explore mathematical sequences" },
-              { title: "Special Numbers", path: "/special-numbers", icon: "π", description: "Discover unique numbers" },
-              { title: "Graphing Tool", path: "/graphing", icon: "📈", description: "Visualize mathematics" }
+              { title: "Sequences", path: "/sequences", icon: "∑", description: "Explore mathematical sequences", color: "from-violet-500/20 to-purple-500/20" },
+              { title: "Special Numbers", path: "/special-numbers", icon: "π", description: "Discover unique numbers", color: "from-blue-500/20 to-cyan-500/20" },
+              { title: "Graphing Tool", path: "/graphing", icon: "📈", description: "Visualize mathematics", color: "from-emerald-500/20 to-teal-500/20" }
             ].map((item, index) => (
               <div
                 key={index}
                 onClick={() => navigate(item.path)}
-                className="group cursor-pointer p-6 rounded-xl bg-gradient-to-br from-gray-800/30 to-gray-900/30 border border-gray-700/40 backdrop-blur-sm hover:border-red-500/30 transition-all duration-500 hover:transform hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/10"
+                className={`group cursor-pointer glass-card hover-lift p-8 bg-gradient-to-br ${item.color} border border-white/10 transition-all duration-500`}
                 style={{ 
                   animation: `gentle-fade-in 0.8s ease-out ${0.6 + index * 0.1}s both` 
                 }}
               >
-                <div className="text-4xl mb-3 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                <div className="text-5xl mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
                   {item.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-red-300 mb-2 group-hover:text-red-200 transition-colors duration-300">
+                <h3 className="text-xl font-futuristic font-semibold text-white mb-3 group-hover:text-gradient-primary transition-all duration-300">
                   {item.title}
                 </h3>
-                <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors duration-300">
+                <p className="font-space text-slate-400 text-sm group-hover:text-slate-300 transition-colors duration-300 leading-relaxed">
                   {item.description}
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Fun Fact Section */}
+          {/* Fun Fact Section with minimal design */}
           <div className="text-center space-y-4" style={{ animation: 'gentle-fade-in 0.8s ease-out 1.2s both' }}>
-            <div className="inline-block p-4 rounded-lg bg-gradient-to-r from-red-900/15 to-amber-900/15 border border-red-700/20 backdrop-blur-sm">
-              <p className="text-gray-300 text-sm">
-                💡 <strong>Secrets await:</strong> Try the Konami code, draw with your mouse, or explore deeply!
+            <div className="inline-block glass-card px-6 py-4 hover-lift border border-purple-500/20">
+              <p className="font-space text-slate-300 text-sm font-light">
+                💡 <strong className="font-medium">Secrets await:</strong> Try the Konami code, draw with your mouse, or explore deeply!
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Refined Floating Action Button */}
+      {/* Minimalistic Floating Action Button */}
       <div className="fixed bottom-8 right-8 z-20">
         <button
           onClick={() => navigate('/auth')}
-          className="group bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white p-4 rounded-full shadow-xl hover:shadow-red-500/30 transition-all duration-500 transform hover:scale-105"
-          style={{ animation: 'gentle-bounce 3s ease-in-out infinite' }}
+          className="group glass-card hover-lift p-4 border border-purple-500/30 transition-all duration-500 animate-fluid-glow"
         >
-          <BookOpen className="h-6 w-6 group-hover:rotate-12 transition-transform duration-500" />
+          <BookOpen className="h-6 w-6 text-purple-300 group-hover:text-white transition-all duration-500 group-hover:rotate-12" />
         </button>
       </div>
     </div>
