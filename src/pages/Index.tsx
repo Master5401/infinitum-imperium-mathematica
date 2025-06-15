@@ -1,100 +1,124 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { AnimatedBackground } from "@/components/AnimatedBackground";
+import { InteractiveCard } from "@/components/InteractiveCard";
+import { MathEasterEgg } from "@/components/MathEasterEgg";
 
 const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "Math Torcher - Home";
+    document.title = "Math Torcher - Explore Mathematical Infinity";
   }, []);
 
+  const cardData = {
+    title: "Explore Mathematical Concepts",
+    description: "Discover the fascinating world of mathematics through interactive tools and resources.",
+    features: [
+      {
+        title: "Daily Challenges",
+        description: "Test your skills with new problems every day",
+        icon: "🎯"
+      },
+      {
+        title: "Comprehensive Library",
+        description: "Access a vast collection of mathematical topics and sequences",
+        icon: "📚"
+      },
+      {
+        title: "Interactive Graphing",
+        description: "Visualize functions and equations with our powerful graphing tool",
+        icon: "📊"
+      },
+      {
+        title: "Personalized Learning",
+        description: "Track your progress and tailor your learning experience",
+        icon: "🎓"
+      }
+    ]
+  };
+
   return (
-    <div className="container min-h-[calc(100vh-3.5rem)] flex items-center justify-center py-12">
-      <Card className="w-full max-w-2xl bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-lg">
-        <CardHeader className="space-y-1.5">
-          <CardTitle className="text-3xl font-bold text-gray-800 dark:text-gray-200">
-            Explore Mathematical Concepts
-          </CardTitle>
-          <CardDescription className="text-gray-600 dark:text-gray-400">
-            Discover the fascinating world of mathematics through interactive tools and resources.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-6">
-          <div className="grid gap-2">
-            <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-              What is Math Torcher?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Math Torcher is an interactive platform designed to help you learn,
-              practice, and master various mathematical concepts. Whether you're a
-              student, a teacher, or simply a math enthusiast, our platform offers
-              a wide range of resources to enhance your mathematical skills.
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Animated Background */}
+      <AnimatedBackground />
+      
+      {/* Easter Egg Component */}
+      <MathEasterEgg />
+      
+      {/* Main Content */}
+      <div className="relative z-10 container min-h-screen flex items-center justify-center py-12">
+        <div className="w-full max-w-4xl space-y-8">
+          {/* Hero Section */}
+          <div className="text-center space-y-6 animate-fade-in">
+            <h1 className="text-6xl md:text-8xl font-bold font-cinzel bg-gradient-to-r from-red-400 via-amber-400 to-red-400 bg-clip-text text-transparent animate-shimmer leading-tight">
+              Math Torcher
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Where mathematics meets <span className="text-amber-400 font-semibold">infinite possibilities</span>
             </p>
+            
+            {/* Animated mathematical formula */}
+            <div className="text-lg text-red-300 font-mono animate-pulse">
+              ∫₋∞^∞ f(knowledge) dx = ∞
+            </div>
           </div>
 
-          <div className="grid gap-4">
-            <h3 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">
-              Key Features
-            </h3>
-            <ul className="grid gap-3">
-              <li className="flex items-start gap-2">
-                <span className="flex-shrink-0 p-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                  <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                </span>
-                <div>
-                  <span className="font-medium text-gray-800 dark:text-gray-200">Daily Challenges:</span>{" "}
-                  <span className="text-gray-600 dark:text-gray-400">Test your skills with new problems every day.</span>
-                </div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="flex-shrink-0 p-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                  <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                </span>
-                <div>
-                  <span className="font-medium text-gray-800 dark:text-gray-200">Comprehensive Library:</span>{" "}
-                  <span className="text-gray-600 dark:text-gray-400">Access a vast collection of mathematical topics and sequences.</span>
-                </div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="flex-shrink-0 p-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                  <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                </span>
-                <div>
-                  <span className="font-medium text-gray-800 dark:text-gray-200">Interactive Graphing:</span>{" "}
-                  <span className="text-gray-600 dark:text-gray-400">Visualize functions and equations with our powerful graphing tool.</span>
-                </div>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="flex-shrink-0 p-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                  <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                </span>
-                <div>
-                  <span className="font-medium text-gray-800 dark:text-gray-200">Personalized Learning:</span>{" "}
-                  <span className="text-gray-600 dark:text-gray-400">Track your progress and tailor your learning experience.</span>
-                </div>
-              </li>
-            </ul>
+          {/* Interactive Main Card */}
+          <div className="animate-scale-in" style={{ animationDelay: '0.3s' }}>
+            <InteractiveCard
+              {...cardData}
+              onGetStarted={() => navigate('/auth')}
+            />
           </div>
-        </CardContent>
-        <div className="flex items-center justify-center p-6 pt-0">
-          <Button 
-            onClick={() => navigate('/auth')} 
-            className="px-6 py-2 text-base font-medium bg-gray-800 hover:bg-gray-700 text-white dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg flex items-center gap-2">
-            Get Started
-            <BookOpen className="h-4 w-4" />
-          </Button>
+
+          {/* Quick Access Features */}
+          <div className="grid md:grid-cols-3 gap-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+            {[
+              { title: "Sequences", path: "/sequences", icon: "∑", description: "Explore mathematical sequences" },
+              { title: "Special Numbers", path: "/special-numbers", icon: "π", description: "Discover unique numbers" },
+              { title: "Graphing Tool", path: "/graphing", icon: "📈", description: "Visualize mathematics" }
+            ].map((item, index) => (
+              <div
+                key={index}
+                onClick={() => navigate(item.path)}
+                className="group cursor-pointer p-6 rounded-xl bg-gradient-to-br from-gray-800/40 to-gray-900/40 border border-gray-700/50 backdrop-blur-sm hover:border-red-500/50 transition-all duration-300 hover:transform hover:scale-105 hover:shadow-xl hover:shadow-red-500/20"
+              >
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                  {item.icon}
+                </div>
+                <h3 className="text-xl font-semibold text-red-300 mb-2 group-hover:text-red-200 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Fun Fact Section */}
+          <div className="text-center space-y-4 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+            <div className="inline-block p-4 rounded-lg bg-gradient-to-r from-red-900/20 to-amber-900/20 border border-red-700/30">
+              <p className="text-gray-300 text-sm">
+                💡 <strong>Did you know?</strong> Try the Konami code (↑↑↓↓←→←→BA) for a mathematical surprise!
+              </p>
+            </div>
+          </div>
         </div>
-      </Card>
+      </div>
+
+      {/* Floating Action Button */}
+      <div className="fixed bottom-8 right-8 z-20">
+        <button
+          onClick={() => navigate('/auth')}
+          className="group bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white p-4 rounded-full shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 animate-bounce"
+        >
+          <BookOpen className="h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
+        </button>
+      </div>
     </div>
   );
 };

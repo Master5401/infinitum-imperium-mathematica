@@ -128,9 +128,6 @@ input:focus, textarea:focus {
   50% {
     transform: translate(-50%, -50%) translateY(-15px) rotate(2deg);
   }
-  100% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
 }
 
 @keyframes shimmer {
@@ -142,38 +139,19 @@ input:focus, textarea:focus {
   }
 }
 
-.animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scale-in 0.3s ease-out forwards;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, 
-    rgba(255, 60, 54, 0.08), 
-    rgba(255, 60, 54, 0.16), 
-    rgba(255, 60, 54, 0.2), 
-    rgba(255, 60, 54, 0.16), 
-    rgba(255, 60, 54, 0.08));
-  background-size: 200% 100%;
-  animation: shimmer 5s infinite;
-  background-clip: text;
-  -webkit-background-clip: text;
-}
-
-.shimmer-effect {
-  background: linear-gradient(90deg, 
-    rgba(255, 60, 54, 0.03), 
-    rgba(255, 60, 54, 0.08), 
-    rgba(255, 60, 54, 0.03));
-  background-size: 200% 100%;
-  animation: shimmer 3s infinite;
+@keyframes explode {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 @keyframes ancient-float {
