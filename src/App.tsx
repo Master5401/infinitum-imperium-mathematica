@@ -17,6 +17,7 @@ import SpecialNumbersBrowse from "./pages/SpecialNumbersBrowse";
 import Learn from "./pages/Learn";
 import Graphing from "./pages/Graphing";
 import Gamification from "./pages/Gamification";
+import Security from "./pages/Security";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ function App() {
                     <Gamification />
                   </ProtectedRoute>
                 } />
+                <Route path="/security" element={<Security />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
